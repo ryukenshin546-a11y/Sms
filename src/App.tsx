@@ -9,6 +9,7 @@ import HelpCenter from "./pages/HelpCenter";
 import AboutUs from "./pages/AboutUs";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import MobyClone from "./pages/MobyClone";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/help-center" element={<HelpCenter />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/moby-clone" element={<MobyClone />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
