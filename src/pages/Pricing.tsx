@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -71,9 +72,9 @@ const Pricing = () => {
                       </div>
                     </div>
                     
-                    <button className="w-full bg-primary text-primary-foreground hover:bg-primary-hover px-4 py-3 rounded-md font-medium transition-professional">
-                      ซื้อแพ็กเกจ
-                    </button>
+                    <Button className="w-full" asChild>
+                      <a href="/register">ซื้อแพ็กเกจ</a>
+                    </Button>
                   </div>
                 </div>
 
@@ -94,9 +95,9 @@ const Pricing = () => {
                       </div>
                     </div>
                     
-                    <button className="w-full bg-primary text-primary-foreground hover:bg-primary-hover px-4 py-3 rounded-md font-medium transition-professional">
-                      ซื้อแพ็กเกจ
-                    </button>
+                    <Button className="w-full" asChild>
+                      <a href="/register">ซื้อแพ็กเกจ</a>
+                    </Button>
                   </div>
                 </div>
 
@@ -123,9 +124,9 @@ const Pricing = () => {
                       </div>
                     </div>
                     
-                    <button className="w-full bg-primary text-primary-foreground hover:bg-primary-hover px-4 py-3 rounded-md font-medium transition-professional">
-                      ซื้อแพ็กเกจ
-                    </button>
+                    <Button className="w-full" asChild>
+                      <a href="/register">ซื้อแพ็กเกจ</a>
+                    </Button>
                   </div>
                 </div>
 
@@ -146,9 +147,9 @@ const Pricing = () => {
                       </div>
                     </div>
                     
-                    <button className="w-full bg-primary text-primary-foreground hover:bg-primary-hover px-4 py-3 rounded-md font-medium transition-professional">
-                      ซื้อแพ็กเกจ
-                    </button>
+                    <Button className="w-full" asChild>
+                      <a href="/register">ซื้อแพ็กเกจ</a>
+                    </Button>
                   </div>
                 </div>
               </>
@@ -176,9 +177,9 @@ const Pricing = () => {
                       </div>
                     </div>
                     
-                    <button className="w-full bg-primary text-primary-foreground hover:bg-primary-hover px-4 py-3 rounded-md font-medium transition-professional">
-                      ซื้อแพ็กเกจ
-                    </button>
+                    <Button className="w-full" asChild>
+                      <a href="/register">ซื้อแพ็กเกจ</a>
+                    </Button>
                   </div>
                 </div>
 
@@ -203,9 +204,9 @@ const Pricing = () => {
                       </div>
                     </div>
                     
-                    <button className="w-full bg-primary text-primary-foreground hover:bg-primary-hover px-4 py-3 rounded-md font-medium transition-professional">
-                      ซื้อแพ็กเกจ
-                    </button>
+                    <Button className="w-full" asChild>
+                      <a href="/register">ซื้อแพ็กเกจ</a>
+                    </Button>
                   </div>
                 </div>
 
@@ -236,9 +237,9 @@ const Pricing = () => {
                       </div>
                     </div>
                     
-                    <button className="w-full bg-primary text-primary-foreground hover:bg-primary-hover px-4 py-3 rounded-md font-medium transition-professional">
-                      ซื้อแพ็กเกจ
-                    </button>
+                    <Button className="w-full" asChild>
+                      <a href="/register">ซื้อแพ็กเกจ</a>
+                    </Button>
                   </div>
                 </div>
 
@@ -263,9 +264,9 @@ const Pricing = () => {
                       </div>
                     </div>
                     
-                    <button className="w-full bg-primary text-primary-foreground hover:bg-primary-hover px-4 py-3 rounded-md font-medium transition-professional">
-                      ซื้อแพ็กเกจ
-                    </button>
+                    <Button className="w-full" asChild>
+                      <a href="/register">ซื้อแพ็กเกจ</a>
+                    </Button>
                   </div>
                 </div>
               </>

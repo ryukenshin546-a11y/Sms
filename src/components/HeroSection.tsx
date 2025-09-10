@@ -26,17 +26,23 @@ const HeroSection = () => {
               <Button 
                 size="lg" 
                 className="bg-primary hover:bg-primary-hover text-lg px-8 py-4 transition-bounce shadow-professional"
+                asChild
               >
-                เริ่มทดลองใช้ฟรี
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <a href="/register">
+                  เริ่มต้นใช้งาน
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
                 className="text-lg px-8 py-4 transition-professional"
+                asChild
               >
-                <Play className="mr-2 h-5 w-5" />
-                ดูวิดีโอแนะนำ
+                <a href="/pricing">
+                  <Play className="mr-2 h-5 w-5" />
+                  ดูราคา
+                </a>
               </Button>
             </div>
 

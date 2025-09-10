@@ -41,16 +41,22 @@ const CTASection = () => {
               <Button 
                 size="lg" 
                 className="bg-primary hover:bg-primary-hover text-lg px-10 py-6 transition-bounce shadow-professional text-primary-foreground"
+                asChild
               >
-                เริ่มทดลองใช้ฟรี
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <a href="/register">
+                  เริ่มทดลองใช้ฟรี
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
                 className="text-lg px-10 py-6 transition-professional"
+                asChild
               >
-                ขอใบเสนอราคา
+                <a href="/help-center">
+                  ขอใบเสนอราคา
+                </a>
               </Button>
             </div>
 

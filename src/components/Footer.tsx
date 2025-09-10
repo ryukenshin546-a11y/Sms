@@ -2,10 +2,10 @@ import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'luc
 
 const Footer = () => {
   const companyLinks = [
-    { label: 'เกี่ยวกับเรา', href: '#about' },
-    { label: 'ทีมงาน', href: '#team' },
-    { label: 'ข่าวสาร', href: '#news' },
-    { label: 'ร่วมงานกับเรา', href: '#careers' }
+    { label: 'เกี่ยวกับเรา', href: '/about-us' },
+    { label: 'ทีมงาน', href: '/about-us#team' },
+    { label: 'ข่าวสาร', href: '/about-us#news' },
+    { label: 'ร่วมงานกับเรา', href: '/about-us#careers' }
   ];
 
   const productLinks = [
@@ -16,17 +16,17 @@ const Footer = () => {
   ];
 
   const supportLinks = [
-    { label: 'ศูนย์ช่วยเหลือ', href: '#help' },
-    { label: 'คู่มือการใช้งาน', href: '#guide' },
-    { label: 'วิดีโอสอน', href: '#tutorials' },
-    { label: 'ติดต่อซัพพอร์ต', href: '#support' }
+    { label: 'ศูนย์ช่วยเหลือ', href: '/help-center' },
+    { label: 'คู่มือการใช้งาน', href: '/help-center#guide' },
+    { label: 'วิดีโอสอน', href: '/help-center#tutorials' },
+    { label: 'ติดต่อซัพพอร์ต', href: '/help-center#support' }
   ];
 
   const legalLinks = [
-    { label: 'นโยบายความเป็นส่วนตัว', href: '#privacy' },
-    { label: 'ข้อกำหนดการใช้งาน', href: '#terms' },
-    { label: 'นโยบายคุกกี้', href: '#cookies' },
-    { label: 'PDPA', href: '#pdpa' }
+    { label: 'นโยบายความเป็นส่วนตัว', href: '/privacy-policy' },
+    { label: 'ข้อกำหนดการใช้งาน', href: '/terms-of-use' },
+    { label: 'นโยบายคุกกี้', href: '/cookie-policy' },
+    { label: 'PDPA', href: '/pdpa-policy' }
   ];
 
   const socialLinks = [
