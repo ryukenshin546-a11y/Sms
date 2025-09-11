@@ -30,12 +30,15 @@ const Navigation = () => {
             <a href="/about-us" className="text-muted-foreground hover:text-foreground transition-professional">
               เกี่ยวกับเรา
             </a>
+            <a href="/profile" className="text-muted-foreground hover:text-foreground transition-professional">
+              โปรไฟล์
+            </a>
           </div>
 
           {/* Desktop CTA Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost">
-              เข้าสู่ระบบ
+            <Button variant="ghost" asChild>
+              <a href="/profile">บัญชีของฉัน</a>
             </Button>
             <Button variant="default" className="bg-primary hover:bg-primary-hover" asChild>
               <a href="/register">ทดลองใช้ฟรี</a>
@@ -86,9 +89,16 @@ const Navigation = () => {
               >
                 เกี่ยวกับเรา
               </a>
+              <a
+                href="/profile"
+                className="block px-3 py-2 text-muted-foreground hover:text-foreground transition-professional"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                โปรไฟล์
+              </a>
               <div className="pt-4 space-y-2">
-                <Button variant="ghost" className="w-full">
-                  เข้าสู่ระบบ
+                <Button variant="ghost" className="w-full" asChild>
+                  <a href="/profile">บัญชีของฉัน</a>
                 </Button>
                 <Button variant="default" className="w-full bg-primary hover:bg-primary-hover" asChild>
                   <a href="/register">ทดลองใช้ฟรี</a>
