@@ -1,25 +1,43 @@
 import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react';
 
 const Footer = () => {
+  const mainNavLinks = [
+    { label: 'หน้าแรก', href: '/' },
+    { label: 'บริการ', href: '/services' },
+    { label: 'แคมเปญ', href: '/campaigns' },
+    { label: 'แดชบอร์ด', href: '/dashboard' }
+  ];
+
   const companyLinks = [
     { label: 'เกี่ยวกับเรา', href: '/about-us' },
     { label: 'ทีมงาน', href: '/about-us#team' },
     { label: 'ข่าวสาร', href: '/about-us#news' },
-    { label: 'ร่วมงานกับเรา', href: '/about-us#careers' }
+    { label: 'ร่วมงานกับเรา', href: '/about-us#careers' },
+    { label: 'ติดต่อเรา', href: '/contact' }
   ];
 
   const productLinks = [
     { label: 'ฟีเจอร์ทั้งหมด', href: '#features' },
     { label: 'ราคา', href: '#pricing' },
     { label: 'การบูรณาการ', href: '#integrations' },
-    { label: 'API', href: '#api' }
+    { label: 'API', href: '#api' },
+    { label: 'เทมเพลต', href: '/templates' }
+  ];
+
+  const resourcesLinks = [
+    { label: 'บล็อก', href: '/blog' },
+    { label: 'เคสสตั๊ดี้', href: '/case-studies' },
+    { label: 'คู่มือการตลาด', href: '/marketing-guide' },
+    { label: 'เว็บinars', href: '/webinars' },
+    { label: 'ดาวน์โหลด', href: '/downloads' }
   ];
 
   const supportLinks = [
     { label: 'ศูนย์ช่วยเหลือ', href: '/help-center' },
     { label: 'คู่มือการใช้งาน', href: '/help-center#guide' },
     { label: 'วิดีโอสอน', href: '/help-center#tutorials' },
-    { label: 'ติดต่อซัพพอร์ต', href: '/help-center#support' }
+    { label: 'ติดต่อซัพพอร์ต', href: '/help-center#support' },
+    { label: 'FAQ', href: '/faq' }
   ];
 
   const legalLinks = [
@@ -41,7 +59,7 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         {/* Main Footer Content */}
         <div className="py-12 md:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
             {/* Company Info */}
             <div className="md:col-span-2 lg:col-span-2 space-y-6">
               <div className="text-2xl md:text-3xl font-bold text-primary">
@@ -85,7 +103,22 @@ const Footer = () => {
               </div>
             </div>
 
-            {/* Links Sections */}
+            {/* Navigation Links */}
+            <div>
+              <h4 className="font-semibold text-lg mb-6">นำทาง</h4>
+              <div className="space-y-3">
+                {mainNavLinks.map((link, index) => (
+                  <a
+                    key={index}
+                    href={link.href}
+                    className="block text-muted-foreground hover:text-primary transition-professional"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+
             <div>
               <h4 className="font-semibold text-lg mb-6">บริษัท</h4>
               <div className="space-y-3">
@@ -117,9 +150,9 @@ const Footer = () => {
             </div>
 
             <div>
-              <h4 className="font-semibold text-lg mb-6">ช่วยเหลือ</h4>
-              <div className="space-y-3 mb-8">
-                {supportLinks.map((link, index) => (
+              <h4 className="font-semibold text-lg mb-6">ทรัพยากร</h4>
+              <div className="space-y-3">
+                {resourcesLinks.map((link, index) => (
                   <a
                     key={index}
                     href={link.href}
@@ -129,18 +162,41 @@ const Footer = () => {
                   </a>
                 ))}
               </div>
+            </div>
+          </div>
 
-              <h4 className="font-semibold text-lg mb-6">กฎหมาย</h4>
-              <div className="space-y-3">
-                {legalLinks.map((link, index) => (
-                  <a
-                    key={index}
-                    href={link.href}
-                    className="block text-muted-foreground hover:text-primary transition-professional text-sm"
-                  >
-                    {link.label}
-                  </a>
-                ))}
+          {/* Support and Legal Links */}
+          <div className="mt-12 pt-8 border-t border-border">
+            <div className="flex flex-wrap gap-x-8 gap-y-6 w-full justify-center">
+              {/* Support Links Horizontal */}
+              <div className="flex flex-col md:flex-row md:items-center md:space-x-6 w-full md:w-auto">
+                <h4 className="font-semibold text-lg mb-2 md:mb-0 md:mr-4 min-w-max">ช่วยเหลือ</h4>
+                <div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
+                  {supportLinks.map((link, index) => (
+                    <a
+                      key={index}
+                      href={link.href}
+                      className="text-muted-foreground hover:text-primary transition-professional text-sm whitespace-nowrap"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+              {/* Legal Links Horizontal */}
+              <div className="flex flex-col md:flex-row md:items-center md:space-x-6 w-full md:w-auto">
+                <h4 className="font-semibold text-lg mb-2 md:mb-0 md:mr-4 min-w-max">กฎหมาย</h4>
+                <div className="flex flex-row flex-wrap gap-x-4 gap-y-2">
+                  {legalLinks.map((link, index) => (
+                    <a
+                      key={index}
+                      href={link.href}
+                      className="text-muted-foreground hover:text-primary transition-professional text-sm whitespace-nowrap"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

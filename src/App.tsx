@@ -11,6 +11,8 @@ import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import MobyClone from "./pages/MobyClone";
 import Profile from "./pages/Profile";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -19,7 +21,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/pricing" element={<Pricing />} />
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/moby-clone" element={<MobyClone />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

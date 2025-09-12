@@ -281,77 +281,98 @@ const Pricing = () => {
         </div>
       </section>
 
-      {/* Detailed Comparison Table - Starter Packages */}
+      {/* Detailed Comparison Table - ตามภาพที่ให้มา */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
-              แพ็กเกจเริ่มต้นสำหรับธุรกิจขนาดเล็ก
+              ราคาแพ็กเกจ
             </h2>
             <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-100">
+                  <thead className="bg-blue-600">
                     <tr>
-                      <th className="text-left px-6 py-4 font-semibold text-gray-900 border-b">Starter Package</th>
-                      <th className="text-center px-6 py-4 font-semibold text-gray-900 border-b">฿1,500</th>
-                      <th className="text-center px-6 py-4 font-semibold text-gray-900 border-b">฿3,500</th>
-                      <th className="text-center px-6 py-4 font-semibold text-gray-900 border-b">฿10,000</th>
-                      <th className="text-center px-6 py-4 font-semibold text-gray-900 border-b">฿30,000</th>
+                      <th className="text-left px-6 py-4 font-semibold text-white">Package</th>
+                      <th className="text-center px-6 py-4 font-semibold text-white">฿ 1,500</th>
+                      <th className="text-center px-6 py-4 font-semibold text-white">฿ 3,500</th>
+                      <th className="text-center px-6 py-4 font-semibold text-white">฿ 10,000</th>
+                      <th className="text-center px-6 py-4 font-semibold text-white">฿ 30,000</th>
+                      <th className="text-center px-6 py-4 font-semibold text-white">฿ 150,000</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-gray-900 font-medium">เครดิตที่ได้รับ</td>
-                      <td className="px-6 py-4 text-center text-gray-700">3,659</td>
-                      <td className="px-6 py-4 text-center text-gray-700">10,000</td>
-                      <td className="px-6 py-4 text-center text-gray-700">32,258</td>
-                      <td className="px-6 py-4 text-center text-gray-700">107,143</td>
-                    </tr>
-                    <tr className="hover:bg-gray-50">
+                    <tr className="bg-gray-50">
                       <td className="px-6 py-4 text-gray-900 font-medium">ราคาต่อเครดิต</td>
+                      <td className="px-6 py-4 text-center text-gray-700">0.49</td>
                       <td className="px-6 py-4 text-center text-gray-700">0.41</td>
-                      <td className="px-6 py-4 text-center text-gray-700">0.35</td>
-                      <td className="px-6 py-4 text-center text-gray-700">0.31</td>
-                      <td className="px-6 py-4 text-center text-gray-700">0.28</td>
+                      <td className="px-6 py-4 text-center text-gray-700">0.37</td>
+                      <td className="px-6 py-4 text-center text-gray-700">0.33</td>
+                      <td className="px-6 py-4 text-center text-gray-700">0.30</td>
                     </tr>
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-gray-900 font-medium">Sender Name</td>
+                    <tr>
+                      <td className="px-6 py-4 text-gray-900 font-medium">ปริมาณเครดิต</td>
+                      <td className="px-6 py-4 text-center text-gray-700">3,061</td>
+                      <td className="px-6 py-4 text-center text-gray-700">8,537</td>
+                      <td className="px-6 py-4 text-center text-gray-700">27,027</td>
+                      <td className="px-6 py-4 text-center text-gray-700">90,910</td>
+                      <td className="px-6 py-4 text-center text-gray-700">500,000</td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="px-6 py-4 text-gray-900 font-medium">OTP Ready to use</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                    </tr>
+                    <tr>
+                      <td className="px-6 py-4 text-gray-900 font-medium">อายุการใช้งาน (เดือน)</td>
+                      <td className="px-6 py-4 text-center text-gray-700">12</td>
+                      <td className="px-6 py-4 text-center text-gray-700">12</td>
+                      <td className="px-6 py-4 text-center text-gray-700">24</td>
+                      <td className="px-6 py-4 text-center text-gray-700">24</td>
+                      <td className="px-6 py-4 text-center text-gray-700">24</td>
+                    </tr>
+                    <tr className="bg-gray-50">
+                      <td className="px-6 py-4 text-gray-900 font-medium">จำนวนชื่อผู้ส่ง</td>
+                      <td className="px-6 py-4 text-center text-gray-700">1</td>
+                      <td className="px-6 py-4 text-center text-gray-700">1</td>
+                      <td className="px-6 py-4 text-center text-gray-700">2</td>
+                      <td className="px-6 py-4 text-center text-gray-700">2</td>
                       <td className="px-6 py-4 text-center text-gray-700">5</td>
-                      <td className="px-6 py-4 text-center text-gray-700">10</td>
-                      <td className="px-6 py-4 text-center text-gray-700">15</td>
-                      <td className="px-6 py-4 text-center text-gray-700">20</td>
                     </tr>
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-gray-900 font-medium">API Ready</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
+                    <tr>
+                      <td className="px-6 py-4 text-gray-900 font-medium">Sms Tracking</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
                     </tr>
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-gray-900 font-medium">OTP Ready</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
+                    <tr className="bg-gray-50">
+                      <td className="px-6 py-4 text-gray-900 font-medium">รายงานการใช้งานรายเดือน</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
                     </tr>
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-gray-900 font-medium">ดูรายงาน</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                    </tr>
-                    <tr className="hover:bg-gray-50">
-                      <td className="px-6 py-4 text-gray-900 font-medium">จัดการผู้รับ</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
-                      <td className="px-6 py-4 text-center text-green-600">✓</td>
+                    <tr>
+                      <td className="px-6 py-4 text-gray-900 font-medium">ราคาการขอชื่อผู้ส่งใหม่</td>
+                      <td className="px-6 py-4 text-center text-gray-700">3,000</td>
+                      <td className="px-6 py-4 text-center text-gray-700">3,000</td>
+                      <td className="px-6 py-4 text-center text-gray-700">2,500</td>
+                      <td className="px-6 py-4 text-center text-gray-700">2,000</td>
+                      <td className="px-6 py-4 text-center text-gray-700">1,500</td>
                     </tr>
                     <tr className="bg-gray-100">
                       <td className="px-6 py-4"></td>
+                      <td className="px-6 py-4 text-center">
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700" size="sm" asChild>
+                          <a href="/register">ซื้อแพ็กเกจ</a>
+                        </Button>
+                      </td>
                       <td className="px-6 py-4 text-center">
                         <Button className="w-full bg-blue-600 hover:bg-blue-700" size="sm" asChild>
                           <a href="/register">ซื้อแพ็กเกจ</a>

@@ -25,11 +25,11 @@ const MobyCaseStudiesSection = () => {
     },
     {
       icon: Users,
-      title: "Thaibulksms",
+      title: "SMS-UP+",
       subtitle: "ผู้ให้บริการธุรกิจ SMS Communication อันดับ 1 ของประเทศไทย",
       description: "",
       image: "/placeholder.svg",
-      logo: "Thaibulksms",
+      logo: "SMS-UP+",
       link: ""
     }
   ];

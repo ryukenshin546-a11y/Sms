@@ -44,7 +44,7 @@ const MobyArticlesSection = () => {
       image: "/placeholder.svg"
     },
     {
-      title: "อีกหนึ่งความภาคภูมิใจ Thaibulksms คว้า 2 รางวัลจากงาน Thailand's MarTech Report & Awards 2025",
+      title: "อีกหนึ่งความภาคภูมิใจ SMS-UP+ คว้า 2 รางวัลจากงาน Thailand's MarTech Report & Awards 2025",
       date: "10 กุมภาพันธ์ 2025",
       type: "News",
       image: "/placeholder.svg"

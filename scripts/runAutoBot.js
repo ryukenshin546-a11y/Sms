@@ -429,7 +429,236 @@ async function runAutoBot() {
     console.log(`   Password: ${testUserData.password}`);
     
     // รอสักครู่ให้ดูผลลัพธ์
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    // ========== เริ่มขั้นตอนแอด CREDITS ==========
+    console.log('🤖 เริ่มขั้นตอนแอด Credits...');
+    
+    // 13. คลิกแท็บ CREDITS MOVEMENT
+    console.log('🤖 คลิกแท็บ CREDITS MOVEMENT...');
+    try {
+      // รอให้หน้าโหลดเสร็จก่อน
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // ใช้ selector ที่คุณให้มา
+      await page.waitForSelector('#root > div > div > div > div > main > div > div > div.content > div > div > div > div.ant-tabs-bar.ant-tabs-top-bar > div > div > div > div > div:nth-child(1) > div:nth-child(4)', { timeout: 10000 });
+      await page.click('#root > div > div > div > div > main > div > div > div.content > div > div > div > div.ant-tabs-bar.ant-tabs-top-bar > div > div > div > div > div:nth-child(1) > div:nth-child(4)');
+      console.log('✅ คลิกแท็บ CREDITS MOVEMENT สำเร็จ');
+    } catch (error) {
+      console.log('⚠️ ลองหาแท็บ CREDITS MOVEMENT ด้วยวิธีอื่น...');
+      await page.evaluate(() => {
+        const tabs = Array.from(document.querySelectorAll('div[role="tab"]'));
+        const creditsTab = tabs.find(tab => tab.textContent?.includes('CREDITS MOVEMENT'));
+        if (creditsTab) {
+          creditsTab.click();
+          console.log('✅ คลิกแท็บ CREDITS MOVEMENT สำเร็จ (วิธีที่ 2)');
+        } else {
+          throw new Error('CREDITS MOVEMENT tab not found');
+        }
+      });
+    }
+    
+    // รอให้แท็บโหลดเสร็จ
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    // 14. เลือก Account Name ที่สร้างไว้
+    console.log(`🤖 เลือก Account Name: ${testUserData.accountName}...`);
+    try {
+      // ค้นหา dropdown ของ Account selection
+      await page.waitForSelector('div.ant-select-selection__placeholder', { timeout: 10000 });
+      
+      // คลิกที่ dropdown เพื่อเปิด
+      await page.click('div.ant-select-selection__placeholder');
+      console.log('✅ คลิก dropdown Account สำเร็จ');
+      
+      // รอให้ dropdown เปิด
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // พิมพ์ชื่อ Account Name เพื่อค้นหา
+      await page.keyboard.type(testUserData.accountName);
+      console.log(`✅ พิมพ์ Account Name: ${testUserData.accountName}`);
+      
+      // รอให้ dropdown แสดงผลลัพธ์
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // เลือกผลลัพธ์แรกใน dropdown
+      await page.evaluate((accountName) => {
+        const dropdownOptions = Array.from(document.querySelectorAll('.ant-select-dropdown-menu-item'));
+        const targetOption = dropdownOptions.find(option => 
+          option.textContent?.includes(accountName)
+        );
+        if (targetOption) {
+          targetOption.click();
+          console.log(`✅ เลือก Account: ${accountName} สำเร็จ`);
+        } else {
+          // ถ้าไม่เจอ ลองกด Enter
+          throw new Error(`Account ${accountName} not found in dropdown`);
+        }
+      }, testUserData.accountName);
+      
+    } catch (error) {
+      console.log('⚠️ ลองเลือก Account ด้วย Enter...');
+      // ลองกด Enter เพื่อเลือก
+      await page.keyboard.press('Enter');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    
+    console.log('✅ เลือก Account Name สำเร็จ - พร้อมสำหรับขั้นตอนต่อไป');
+    
+    // รอสักครู่ให้ form อัพเดท
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // 15. กรอกจำนวน Credits
+    console.log('🤖 กรอกจำนวน Credits: 10...');
+    try {
+      // รอให้ input field ปรากฏ
+      await page.waitForSelector('input[role="spinbutton"][placeholder="Amount Credits"]', { timeout: 10000 });
+      
+      // คลิกที่ input field
+      await page.click('input[role="spinbutton"][placeholder="Amount Credits"]');
+      
+      // ล้างค่าเดิม (ถ้ามี) ด้วยการเลือกทั้งหมดและลบ
+      await page.keyboard.down('Control');
+      await page.keyboard.press('KeyA');
+      await page.keyboard.up('Control');
+      await page.keyboard.press('Delete');
+      
+      // พิมพ์จำนวน 10
+      await page.type('input[role="spinbutton"][placeholder="Amount Credits"]', '10');
+      console.log('✅ กรอกจำนวน Credits: 10 สำเร็จ');
+      
+    } catch (error) {
+      console.log('⚠️ ลองหา input field ด้วย selector ที่แน่นอน...');
+      // ใช้ selector ที่คุณให้มา
+      await page.waitForSelector('#main > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-12.ant-col-lg-12.ant-col-xl-7 > div.ant-row > div > div.ant-input-number-input-wrap > input', { timeout: 5000 });
+      await page.click('#main > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-12.ant-col-lg-12.ant-col-xl-7 > div.ant-row > div > div.ant-input-number-input-wrap > input');
+      
+      // ล้างค่าเดิม
+      await page.keyboard.down('Control');
+      await page.keyboard.press('KeyA');
+      await page.keyboard.up('Control');
+      await page.keyboard.press('Delete');
+      
+      await page.type('#main > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-12.ant-col-lg-12.ant-col-xl-7 > div.ant-row > div > div.ant-input-number-input-wrap > input', '10');
+      console.log('✅ กรอกจำนวน Credits: 10 สำเร็จ (ด้วย selector แน่นอน)');
+    }
+    
+    // รอให้ระบบประมวลผลและแสดงปุ่ม Save
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // 16. คลิกปุ่ม Save ในหน้า Credits tab
+    console.log('🤖 คลิกปุ่ม Save ในหน้า Credits...');
+    try {
+      // ใช้ selector ที่คุณให้มาเฉพาะสำหรับหน้า Credits
+      await page.waitForSelector('#main > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-24.ant-col-lg-24.ant-col-xl-2 > div.ant-row-flex.ant-row-flex-end > button', { timeout: 10000 });
+      await page.click('#main > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-24.ant-col-lg-24.ant-col-xl-2 > div.ant-row-flex.ant-row-flex-end > button');
+      console.log('✅ คลิกปุ่ม Save ในหน้า Credits สำเร็จ');
+      
+    } catch (error) {
+      console.log('⚠️ ลองหาปุ่ม Save ในหน้า Credits ด้วยวิธีอื่น...');
+      // ลองหาปุ่ม Save ที่อยู่ในส่วน Credits movement โดยเฉพาะ
+      await page.evaluate(() => {
+        // หาปุ่มที่อยู่ในส่วน main และมี class ant-row-flex-end
+        const saveButtonContainer = document.querySelector('#main .ant-row-flex.ant-row-flex-end');
+        if (saveButtonContainer) {
+          const saveButton = saveButtonContainer.querySelector('button.ant-btn.ant-btn-primary');
+          if (saveButton) {
+            saveButton.click();
+            console.log('✅ คลิกปุ่ม Save ในหน้า Credits สำเร็จ (วิธีที่ 2)');
+          } else {
+            throw new Error('Save button in Credits section not found');
+          }
+        } else {
+          throw new Error('Save button container in Credits section not found');
+        }
+      });
+    }
+    
+    // รอให้ confirmation popup ปรากฏ - เพิ่มเวลารอให้ popup แสดงชัดเจน
     await new Promise(resolve => setTimeout(resolve, 5000));
+    
+    // 17. คลิกปุ่ม OK ใน confirmation popup ของ CREDITS โดยเฉพาะ
+    console.log('🤖 คลิกปุ่ม OK ใน confirmation popup ของ CREDITS...');
+    try {
+      // ตรวจสอบว่ามี popup อยู่จริงและมี content เกี่ยวกับ Credits
+      await page.evaluate(() => {
+        console.log('🔍 ตรวจสอบ popup ที่ปรากฏ:');
+        const modals = document.querySelectorAll('.ant-modal-wrap.popup-question');
+        modals.forEach((modal, index) => {
+          const content = modal.textContent || '';
+          console.log(`   Modal ${index + 1}: ${content.substring(0, 100)}...`);
+        });
+      });
+      
+      // หา popup ที่เกี่ยวข้องกับ Credits โดยเฉพาะ
+      const creditPopupFound = await page.evaluate(() => {
+        const modals = Array.from(document.querySelectorAll('.ant-modal-wrap.popup-question'));
+        
+        // หา popup ที่มีเนื้อหาเกี่ยวกับ Credits/เครดิต
+        const creditModal = modals.find(modal => {
+          const content = modal.textContent?.toLowerCase() || '';
+          return content.includes('credit') || 
+                 content.includes('เครดิต') || 
+                 content.includes('amount') ||
+                 content.includes('จำนวน');
+        });
+        
+        if (creditModal) {
+          const okButton = creditModal.querySelector('button.ant-btn.ant-btn-primary');
+          if (okButton && okButton.textContent?.includes('OK')) {
+            okButton.click();
+            console.log('✅ คลิกปุ่ม OK ของ Credits popup สำเร็จ');
+            return true;
+          }
+        }
+        return false;
+      });
+      
+      if (!creditPopupFound) {
+        throw new Error('Credits confirmation popup not found');
+      }
+      
+    } catch (error) {
+      console.log('⚠️ ลองหาปุ่ม OK ของ Credits ด้วยวิธีอื่น...');
+      
+      // วิธีที่ 2: หาปุ่ม OK ล่าสุดที่ปรากฏ
+      await page.evaluate(() => {
+        const modals = Array.from(document.querySelectorAll('.ant-modal-wrap'));
+        
+        // เรียงตาม z-index หรือตำแหน่งล่าสุด
+        const visibleModals = modals.filter(modal => {
+          const style = window.getComputedStyle(modal);
+          return style.display !== 'none' && style.visibility !== 'hidden';
+        });
+        
+        if (visibleModals.length > 0) {
+          // ใช้ modal สุดท้าย (น่าจะเป็น Credits popup)
+          const lastModal = visibleModals[visibleModals.length - 1];
+          const okButton = lastModal.querySelector('button.ant-btn.ant-btn-primary');
+          
+          if (okButton && okButton.textContent?.includes('OK')) {
+            okButton.click();
+            console.log('✅ คลิกปุ่ม OK ของ Credits popup สำเร็จ (วิธีที่ 2)');
+          } else {
+            throw new Error('OK button in Credits popup not found');
+          }
+        } else {
+          throw new Error('No visible popup found');
+        }
+      });
+    }
+    
+    // รอให้การดำเนินการ Credits เสร็จสิ้น
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    console.log('🎉 เพิ่ม Credits สำเร็จ!');
+    console.log('📋 สรุปการดำเนินการ:');
+    console.log(`   ✅ สร้าง Sub Account: ${testUserData.accountName}`);
+    console.log(`   ✅ เพิ่ม Credits: 10 หน่วย`);
+    console.log(`   ✅ Account ที่ได้รับ Credits: ${testUserData.accountName}`);
+    
+    // รอสักครู่ให้ดูผลลัพธ์สุดท้าย
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
   } catch (error) {
     console.error('🚫 Auto-Bot ล้มเหลว:', error);

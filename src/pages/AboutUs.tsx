@@ -16,7 +16,7 @@ const AboutUs = () => {
           <div className="max-w-5xl mx-auto text-center">
             <h1 className="text-6xl md:text-7xl font-black text-foreground mb-8 leading-tight">
               ทำไมต้องเลือก
-              <span className="block text-primary">THAIBULKSMS?</span>
+              <span className="block text-primary">SMS-UP+?</span>
             </h1>
             <p className="text-2xl text-muted-foreground mb-12 leading-relaxed max-w-4xl mx-auto">
               สัมผัสพลังของการสื่อสาร SMS ที่เชื่อถือได้และสร้างผลลัพธ์ 
@@ -315,7 +315,7 @@ const AboutUs = () => {
                     <Mail className="h-5 w-5 text-primary" />
                     <div>
                       <div className="font-semibold">การสนับสนุนทางอีเมล</div>
-                      <div className="text-sm text-muted-foreground">support@thaibulksms.com</div>
+                      <div className="text-sm text-muted-foreground">support@SMS-UP+.com</div>
                     </div>
                   </div>
                   
@@ -348,7 +348,7 @@ const AboutUs = () => {
               พร้อมที่จะสัมผัสความแตกต่างหรือยัง?
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
-              เข้าร่วมธุรกิจนับพันที่ไว้วางใจ Thaibulksms สำหรับความต้องการด้านการสื่อสาร
+              เข้าร่วมธุรกิจนับพันที่ไว้วางใจ SMS-UP+ สำหรับความต้องการด้านการสื่อสาร
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 

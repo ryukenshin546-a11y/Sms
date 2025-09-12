@@ -150,3 +150,62 @@
     transition: var(--transition-bounce);
   }
 }
+
+/* Print Styles for Legal Pages */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-break {
+    page-break-before: always;
+  }
+
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+    color: black !important;
+    background: white !important;
+  }
+
+  h1 {
+    font-size: 18pt;
+    margin-bottom: 20pt;
+    color: black !important;
+  }
+
+  h2 {
+    font-size: 14pt;
+    margin-bottom: 12pt;
+    color: black !important;
+  }
+
+  h3 {
+    font-size: 12pt;
+    margin-bottom: 8pt;
+    color: black !important;
+  }
+
+  .prose {
+    max-width: none;
+  }
+
+  .prose p {
+    margin-bottom: 8pt;
+  }
+
+  .prose ul, .prose ol {
+    margin-bottom: 8pt;
+  }
+
+  /* Hide navigation and footer when printing */
+  nav, footer {
+    display: none !important;
+  }
+
+  /* Ensure cards have proper borders for print */
+  .card {
+    border: 1px solid #ccc !important;
+    background: white !important;
+  }
+}
