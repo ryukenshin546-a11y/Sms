@@ -19,8 +19,8 @@ const AboutUs = () => {
               <span className="block text-primary">SMS-UP+?</span>
             </h1>
             <p className="text-2xl text-muted-foreground mb-12 leading-relaxed max-w-4xl mx-auto">
-              สัมผัสพลังของการสื่อสาร SMS ที่เชื่อถือได้และสร้างผลลัพธ์ 
-              เข้าร่วมธุรกิจนับพันที่ไว้วางใจเราในการส่งข้อความสำคัญที่สุด
+              บริการส่งข้อความ SMS ที่เชื่อถือได้และมีประสิทธิภาพสูง
+              เข้าร่วมธุรกิจมากกว่า 50,000 แห่งที่ไว้วางใจเราในการส่งข้อความสำคัญ
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
@@ -28,7 +28,7 @@ const AboutUs = () => {
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold"
                 onClick={() => window.location.href = '/register'}
               >
-                เริ่มต้นเส้นทางของคุณ
+                เริ่มต้นใช้งาน
               </Button>
               <Button 
                 size="lg" 
@@ -52,7 +52,7 @@ const AboutUs = () => {
                 จุดแข็งหลักของเรา
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                สิ่งที่ทำให้เราแตกต่างในตลาด SMS ที่มีการแข่งขัน
+                สิ่งที่ทำให้เราแตกต่างในตลาดบริการส่ง SMS
               </p>
             </div>
             
@@ -69,17 +69,17 @@ const AboutUs = () => {
                 </CardHeader>
                 <CardContent className="text-center">
                   <p className="text-muted-foreground mb-6 leading-relaxed">
-                    อัตราแบบอุตสาหกรรมชั้นนำโดยไม่กระทบต่อคุณภาพ 
-                    ราคาที่โปร่งใสไม่มีค่าธรรมเนียมแอบแฝง
+                    ราคาที่สมเหตุสมผลและโปร่งใส ไม่มีค่าธรรมเนียมซ่อนเร้น
+                    เหมาะสำหรับธุรกิจทุกขนาด
                   </p>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center justify-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span>เริ่มต้นที่ 0.15 บาทต่อ SMS</span>
+                      <span>เริ่มต้นที่ 0.15 บาทต่อข้อความ</span>
                     </li>
                     <li className="flex items-center justify-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span>มีส่วนลดตามปริมาณ</span>
+                      <span>ส่วนลดพิเศษเมื่อใช้ปริมาณมาก</span>
                     </li>
                     <li className="flex items-center justify-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-600" />
@@ -96,25 +96,25 @@ const AboutUs = () => {
                     <Shield className="h-10 w-10 text-blue-600 dark:text-blue-400" />
                   </div>
                   <CardTitle className="text-2xl font-bold text-blue-800 dark:text-blue-200">
-                    ความเสถียรที่ไม่เคยมีใครเทียบ
+                    ความน่าเชื่อถือสูง
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
                   <p className="text-muted-foreground mb-6 leading-relaxed">
-                    โครงสร้างพื้นฐานที่แข็งแกร่งเพื่อให้แน่ใจว่าข้อความของคุณจะถึงปลายทางเสมอ
+                    ระบบที่เสถียรและเชื่อถือได้ เพื่อให้มั่นใจว่าข้อความจะถึงผู้รับเสมอ
                   </p>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center justify-center gap-2">
                       <CheckCircle className="h-4 w-4 text-blue-600" />
-                      <span>รับประกัน uptime 99.9%</span>
+                      <span>รับประกันการทำงาน 99.9%</span>
                     </li>
                     <li className="flex items-center justify-center gap-2">
                       <CheckCircle className="h-4 w-4 text-blue-600" />
-                      <span>ระบบสำรอง</span>
+                      <span>ระบบสำรองเพื่อป้องกันการหยุดทำงาน</span>
                     </li>
                     <li className="flex items-center justify-center gap-2">
                       <CheckCircle className="h-4 w-4 text-blue-600" />
-                      <span>การตรวจสอบแบบเรียลไทม์</span>
+                      <span>การตรวจสอบระบบแบบเรียลไทม์</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -127,25 +127,25 @@ const AboutUs = () => {
                     <Lock className="h-10 w-10 text-purple-600 dark:text-purple-400" />
                   </div>
                   <CardTitle className="text-2xl font-bold text-purple-800 dark:text-purple-200">
-                    ความปลอดภัยระดับองค์กร
+                    ความปลอดภัยระดับสูง
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
                   <p className="text-muted-foreground mb-6 leading-relaxed">
-                    ความปลอดภัยระดับธนาคารในการปกป้องข้อมูลของคุณและข้อมูลลูกค้าของคุณ
+                    การปกป้องข้อมูลระดับองค์กร เพื่อความปลอดภัยของข้อมูลคุณและลูกค้า
                   </p>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center justify-center gap-2">
                       <CheckCircle className="h-4 w-4 text-purple-600" />
-                      <span>การเข้ารหัส SSL 256 บิต</span>
+                      <span>การเข้ารหัสข้อมูล SSL 256 บิต</span>
                     </li>
                     <li className="flex items-center justify-center gap-2">
                       <CheckCircle className="h-4 w-4 text-purple-600" />
-                      <span>ปฏิบัติตาม GDPR</span>
+                      <span>ปฏิบัติตามกฎหมายคุ้มครองข้อมูลส่วนบุคคล</span>
                     </li>
                     <li className="flex items-center justify-center gap-2">
                       <CheckCircle className="h-4 w-4 text-purple-600" />
-                      <span>การตรวจสอบความปลอดภัยเป็นประจำ</span>
+                      <span>การตรวจสอบความปลอดภัยอย่างสม่ำเสมอ</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -164,33 +164,33 @@ const AboutUs = () => {
                 ข้อตกลงระดับการให้บริการ
               </Badge>
               <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-                การรับประกัน SLA ของเรา
+                การรับประกันคุณภาพบริการ
               </h2>
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                เราสนับสนุนบริการของเราด้วยการรับประกันที่มั่นคงซึ่งคุณสามารถไว้วางใจได้
+                เรามุ่งมั่นในการให้บริการที่มีคุณภาพสูงสุด และพร้อมรับผิดชอบต่อผลลัพธ์
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
               <div className="text-center">
                 <div className="text-5xl font-black text-primary mb-2">99.9%</div>
-                <div className="text-muted-foreground font-semibold">รับประกัน Uptime</div>
-                <div className="text-sm text-muted-foreground mt-1">น้อยกว่า 8.77 ชั่วโมง downtime ต่อปี</div>
+                <div className="text-muted-foreground font-semibold">การรับประกันการทำงาน</div>
+                <div className="text-sm text-muted-foreground mt-1">หยุดทำงานไม่เกิน 8.77 ชั่วโมงต่อปี</div>
               </div>
               <div className="text-center">
                 <div className="text-5xl font-black text-primary mb-2">98.5%</div>
-                <div className="text-muted-foreground font-semibold">อัตราการส่ง</div>
-                <div className="text-sm text-muted-foreground mt-1">การส่งข้อความชั้นนำในอุตสาหกรรม</div>
+                <div className="text-muted-foreground font-semibold">อัตราการส่งสำเร็จ</div>
+                <div className="text-sm text-muted-foreground mt-1">มาตรฐานสูงสุดในอุตสาหกรรม</div>
               </div>
               <div className="text-center">
-                <div className="text-5xl font-black text-primary mb-2">&lt;30s</div>
+                <div className="text-5xl font-black text-primary mb-2">&lt;30 วินาที</div>
                 <div className="text-muted-foreground font-semibold">เวลาตอบสนอง</div>
-                <div className="text-sm text-muted-foreground mt-1">เวลาเฉลี่ยในการตอบสนอง API</div>
+                <div className="text-sm text-muted-foreground mt-1">เวลาเฉลี่ยในการส่งข้อความ</div>
               </div>
               <div className="text-center">
                 <div className="text-5xl font-black text-primary mb-2">24/7</div>
-                <div className="text-muted-foreground font-semibold">การตรวจสอบ</div>
-                <div className="text-sm text-muted-foreground mt-1">การตรวจสอบระบบตลอด 24 ชั่วโมง</div>
+                <div className="text-muted-foreground font-semibold">การตรวจสอบระบบ</div>
+                <div className="text-sm text-muted-foreground mt-1">ตรวจสอบอย่างต่อเนื่องตลอด 24 ชั่วโมง</div>
               </div>
             </div>
 
@@ -202,13 +202,13 @@ const AboutUs = () => {
                       การรับประกันทางการเงิน
                     </h3>
                     <p className="text-muted-foreground mb-6 leading-relaxed">
-                      หากเราไม่สามารถปฏิบัติตามข้อผูกพัน SLA ของเรา คุณจะได้รับเครดิตบริการ 
+                      หากเราไม่สามารถปฏิบัติตามข้อผูกพันในการให้บริการ คุณจะได้รับเครดิตบริการ
                       ซึ่งจะถูกนำไปใช้โดยอัตโนมัติในรอบการเรียกเก็บเงินครั้งต่อไป
                     </p>
                     <ul className="space-y-3">
                       <li className="flex items-start gap-3">
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">เครดิต 10% สำหรับ uptime ต่ำกว่า 99.9%</span>
+                        <span className="text-sm">เครดิต 10% สำหรับการทำงานต่ำกว่า 99.9%</span>
                       </li>
                       <li className="flex items-start gap-3">
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
@@ -257,11 +257,11 @@ const AboutUs = () => {
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-foreground mb-2">
-                        พร้อมให้บริการตลอด 24 ชั่วโมง
+                        บริการสนับสนุน 24 ชั่วโมง
                       </h3>
                       <p className="text-muted-foreground">
-                        ทีมสนับสนุนของเราพร้อมให้บริการ 24 ชั่วโมงต่อวัน 7 วันต่อสัปดาห์ 
-                        รวมถึงวันหยุด ไม่ว่าคุณจะต้องการความช่วยเหลือเมื่อใด เราก็อยู่ที่นี่
+                        ทีมงานของเราพร้อมให้บริการทุกวันตลอด 24 ชั่วโมง รวมถึงวันหยุด
+                        เพื่อให้ความช่วยเหลือคุณได้ทุกเมื่อที่ต้องการ
                       </p>
                     </div>
                   </div>
@@ -272,11 +272,11 @@ const AboutUs = () => {
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-foreground mb-2">
-                        ทีมเทคนิคผู้เชี่ยวชาญ
+                        ผู้เชี่ยวชาญด้านเทคนิค
                       </h3>
                       <p className="text-muted-foreground">
-                        ผู้เชี่ยวชาญด้านสนับสนุนของเรามีความเชี่ยวชาญอย่างลึกซึ้งในเทคโนโลยี SMS 
-                        และสามารถช่วยคุณปรับแต่งแคมเปญเพื่อผลลัพธ์สูงสุด
+                        ทีมงานสนับสนุนของเรามีความรู้เชิงลึกด้านเทคโนโลยี SMS
+                        และพร้อมให้คำปรึกษาในการปรับแต่งการใช้งานเพื่อผลลัพธ์ที่ดีที่สุด
                       </p>
                     </div>
                   </div>
@@ -287,11 +287,11 @@ const AboutUs = () => {
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-foreground mb-2">
-                        ช่องทางการสนับสนุนหลายช่องทาง
+                        ช่องทางการติดต่อหลากหลาย
                       </h3>
                       <p className="text-muted-foreground">
-                        ติดต่อเราได้ผ่านโทรศัพท์ อีเมล แชทสด หรือศูนย์ช่วยเหลือที่ครอบคลุมของเรา 
-                        เลือกช่องทางที่เหมาะกับคุณมากที่สุด
+                        คุณสามารถติดต่อเราได้ผ่านโทรศัพท์ อีเมล แชทออนไลน์ หรือศูนย์ช่วยเหลือ
+                        เลือกช่องทางที่สะดวกสำหรับคุณ
                       </p>
                     </div>
                   </div>
@@ -345,26 +345,26 @@ const AboutUs = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-              พร้อมที่จะสัมผัสความแตกต่างหรือยัง?
+              พร้อมเริ่มต้นใช้งานหรือไม่?
             </h2>
             <p className="text-xl text-muted-foreground mb-8">
-              เข้าร่วมธุรกิจนับพันที่ไว้วางใจ SMS-UP+ สำหรับความต้องการด้านการสื่อสาร
+              เข้าร่วมธุรกิจจำนวนมากที่ไว้วางใจเราในการส่งข้อความ SMS ที่มีประสิทธิภาพ
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold"
                 onClick={() => window.location.href = '/register'}
               >
-                เริ่มต้นวันนี้
+                สมัครใช้งาน
               </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
+              <Button
+                size="lg"
+                variant="outline"
                 className="px-8 py-4 text-lg font-semibold"
                 onClick={() => window.location.href = '/pricing'}
               >
-                เปรียบเทียบแพ็กเกจ
+                ดูราคาและแพ็กเกจ
               </Button>
             </div>
           </div>

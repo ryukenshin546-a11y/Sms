@@ -22,7 +22,7 @@ const CTASection = () => {
             </h2>
             
             <p className="text-lg md:text-xl text-muted-foreground mb-6 md:mb-8 max-w-2xl mx-auto leading-relaxed">
-              อย่าปล่อยให้โอกาสหลุดลอยไป เริ่มใช้ MarketPro 
+              อย่าปล่อยให้โอกาสหลุดลอยไป เริ่มใช้ SMS-UP+ 
               และเพิ่มยอดขายได้ตั้งแต่สัปดาห์แรก
             </p>
 

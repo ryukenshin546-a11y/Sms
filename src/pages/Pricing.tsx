@@ -13,17 +13,17 @@ const Pricing = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="pt-24 pb-16 bg-gradient-to-br from-blue-600 to-blue-800">
+      <section className="pt-24 pb-16 hero-gradient">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row items-center justify-between max-w-6xl mx-auto">
             <div className="text-center lg:text-left lg:flex-1">
-              <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              <h1 className="text-5xl md:text-6xl font-bold text-primary-foreground mb-6">
                 SMS ราคาถูก
               </h1>
-              <p className="text-2xl md:text-3xl text-blue-100 mb-4">
+              <p className="text-2xl md:text-3xl text-primary-foreground/90 mb-4">
                 ต่ำกว่า 0.15 บาท/เครดิต
               </p>
-              <p className="text-lg text-blue-200 mb-8">
+              <p className="text-lg text-primary-foreground/80 mb-8">
                 ส่ง SMS ราคาถูกที่สุดในประเทศไทย พร้อมคุณภาพและความน่าเชื่อถือระดับมืออาชีพ
               </p>
             </div>
@@ -35,10 +35,10 @@ const Pricing = () => {
       </section>
 
       {/* Plan Type Toggle */}
-      <section className="py-8 bg-gray-50">
+      <section className="py-8 bg-muted">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center justify-center bg-white border border-gray-200 rounded-lg p-1 shadow-md">
+            <div className="inline-flex items-center justify-center bg-card border border-border rounded-lg p-1 shadow-md">
               <ToggleGroup 
                 type="single" 
                 value={selectedPlan} 
@@ -47,7 +47,7 @@ const Pricing = () => {
               >
                 <ToggleGroupItem 
                   value="standard" 
-                  className="px-10 py-6 text-sm font-medium data-[state=on]:bg-blue-600 data-[state=on]:text-white rounded-md transition-colors min-h-[80px] flex items-center"
+                  className="px-10 py-6 text-sm font-medium data-[state=on]:bg-primary data-[state=on]:text-primary-foreground rounded-md transition-colors min-h-[80px] flex items-center"
                 >
                   <div className="text-center leading-tight">
                     <div className="font-semibold text-base">Standard SMS</div>
@@ -57,7 +57,7 @@ const Pricing = () => {
                 </ToggleGroupItem>
                 <ToggleGroupItem 
                   value="corporate" 
-                  className="px-10 py-6 text-sm font-medium data-[state=on]:bg-blue-600 data-[state=on]:text-white rounded-md transition-colors min-h-[80px] flex items-center"
+                  className="px-10 py-6 text-sm font-medium data-[state=on]:bg-primary data-[state=on]:text-primary-foreground rounded-md transition-colors min-h-[80px] flex items-center"
                 >
                   <div className="text-center leading-tight">
                     <div className="font-semibold text-base">Corporate SMS</div>
@@ -78,81 +78,81 @@ const Pricing = () => {
             {selectedPlan === 'standard' ? (
               <>
                 {/* Package 1 */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div className="bg-card border border-border rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900 mb-2">฿3,500</div>
-                    <div className="text-sm text-gray-600 mb-4">0.41 บาท/เครดิต</div>
+                    <div className="text-3xl font-bold text-card-foreground mb-2">฿3,500</div>
+                    <div className="text-sm text-muted-foreground mb-4">0.41 บาท/เครดิต</div>
                     
                     <div className="space-y-3 mb-6">
-                      <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                        <span className="text-sm text-gray-600">เครดิต</span>
-                        <span className="font-medium text-gray-900">8,537</span>
+                      <div className="flex justify-between items-center py-2 border-b border-border">
+                        <span className="text-sm text-muted-foreground">เครดิต</span>
+                        <span className="font-medium text-card-foreground">8,537</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
-                        <span className="text-sm text-gray-600">Sender Names</span>
-                        <span className="font-medium text-gray-900">5</span>
+                        <span className="text-sm text-muted-foreground">Sender Names</span>
+                        <span className="font-medium text-card-foreground">5</span>
                       </div>
                     </div>
                     
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700" asChild>
+                    <Button className="w-full" asChild>
                       <a href="/register">ซื้อแพ็กเกจ</a>
                     </Button>
                   </div>
                 </div>
 
                 {/* Package 2 - Most Popular */}
-                <div className="bg-white border-2 border-blue-600 rounded-lg p-6 shadow-lg relative hover:shadow-xl transition-shadow">
+                <div className="bg-card border-2 border-primary rounded-lg p-6 shadow-lg relative hover:shadow-xl transition-shadow">
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                    <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
                       Most Popular
                     </span>
                   </div>
                   
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900 mb-2">฿10,000</div>
-                    <div className="text-sm text-gray-600 mb-4">0.32 บาท/เครดิต</div>
+                    <div className="text-3xl font-bold text-card-foreground mb-2">฿10,000</div>
+                    <div className="text-sm text-muted-foreground mb-4">0.32 บาท/เครดิต</div>
                     
                     <div className="space-y-3 mb-6">
-                      <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                        <span className="text-sm text-gray-600">เครดิต</span>
-                        <span className="font-medium text-gray-900">31,250</span>
+                      <div className="flex justify-between items-center py-2 border-b border-border">
+                        <span className="text-sm text-muted-foreground">เครดิต</span>
+                        <span className="font-medium text-card-foreground">31,250</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
-                        <span className="text-sm text-gray-600">Sender Names</span>
-                        <span className="font-medium text-gray-900">10</span>
+                        <span className="text-sm text-muted-foreground">Sender Names</span>
+                        <span className="font-medium text-card-foreground">10</span>
                       </div>
                     </div>
                     
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700" asChild>
+                    <Button className="w-full" asChild>
                       <a href="/register">ซื้อแพ็กเกจ</a>
                     </Button>
                   </div>
                 </div>
 
                 {/* Package 3 - Premium */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div className="bg-card border border-border rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                    <span className="bg-accent text-accent-foreground px-4 py-1 rounded-full text-sm font-medium">
                       Premium
                     </span>
                   </div>
                   
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900 mb-2">฿1,000,000</div>
-                    <div className="text-sm text-gray-600 mb-4">0.17 บาท/เครดิต</div>
+                    <div className="text-3xl font-bold text-card-foreground mb-2">฿1,000,000</div>
+                    <div className="text-sm text-muted-foreground mb-4">0.17 บาท/เครดิต</div>
                     
                     <div className="space-y-3 mb-6">
-                      <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                        <span className="text-sm text-gray-600">เครดิต</span>
-                        <span className="font-medium text-gray-900">5,882,353</span>
+                      <div className="flex justify-between items-center py-2 border-b border-border">
+                        <span className="text-sm text-muted-foreground">เครดิต</span>
+                        <span className="font-medium text-card-foreground">5,882,353</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
-                        <span className="text-sm text-gray-600">Sender Names</span>
-                        <span className="font-medium text-gray-900">ไม่จำกัด</span>
+                        <span className="text-sm text-muted-foreground">Sender Names</span>
+                        <span className="font-medium text-card-foreground">ไม่จำกัด</span>
                       </div>
                     </div>
                     
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700" asChild>
+                    <Button className="w-full" asChild>
                       <a href="/register">ซื้อแพ็กเกจ</a>
                     </Button>
                   </div>
@@ -162,93 +162,93 @@ const Pricing = () => {
               /* Corporate SMS packages */
               <>
                 {/* Corporate Package 1 */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div className="bg-card border border-border rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900 mb-2">฿5,000</div>
-                    <div className="text-sm text-gray-600 mb-4">0.38 บาท/เครดิต</div>
+                    <div className="text-3xl font-bold text-card-foreground mb-2">฿5,000</div>
+                    <div className="text-sm text-muted-foreground mb-4">0.38 บาท/เครดิต</div>
                     
                     <div className="space-y-3 mb-6">
-                      <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                        <span className="text-sm text-gray-600">เครดิต</span>
-                        <span className="font-medium text-gray-900">13,158</span>
+                      <div className="flex justify-between items-center py-2 border-b border-border">
+                        <span className="text-sm text-muted-foreground">เครดิต</span>
+                        <span className="font-medium text-card-foreground">13,158</span>
                       </div>
-                      <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                        <span className="text-sm text-gray-600">Sender Names</span>
-                        <span className="font-medium text-gray-900">10</span>
+                      <div className="flex justify-between items-center py-2 border-b border-border">
+                        <span className="text-sm text-muted-foreground">Sender Names</span>
+                        <span className="font-medium text-card-foreground">10</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
-                        <span className="text-sm text-gray-600">API Access</span>
-                        <span className="font-medium text-green-600">✓</span>
+                        <span className="text-sm text-muted-foreground">API Access</span>
+                        <span className="font-medium text-accent">✓</span>
                       </div>
                     </div>
                     
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700" asChild>
+                    <Button className="w-full" asChild>
                       <a href="/register">ซื้อแพ็กเกจ</a>
                     </Button>
                   </div>
                 </div>
 
                 {/* Corporate Package 2 - Most Popular */}
-                <div className="bg-white border-2 border-blue-600 rounded-lg p-6 shadow-lg relative hover:shadow-xl transition-shadow">
+                <div className="bg-card border-2 border-primary rounded-lg p-6 shadow-lg relative hover:shadow-xl transition-shadow">
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                    <span className="bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
                       Most Popular
                     </span>
                   </div>
                   
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900 mb-2">฿25,000</div>
-                    <div className="text-sm text-gray-600 mb-4">0.30 บาท/เครดิต</div>
+                    <div className="text-3xl font-bold text-card-foreground mb-2">฿25,000</div>
+                    <div className="text-sm text-muted-foreground mb-4">0.30 บาท/เครดิต</div>
                     
                     <div className="space-y-3 mb-6">
-                      <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                        <span className="text-sm text-gray-600">เครดิต</span>
-                        <span className="font-medium text-gray-900">83,333</span>
+                      <div className="flex justify-between items-center py-2 border-b border-border">
+                        <span className="text-sm text-muted-foreground">เครดิต</span>
+                        <span className="font-medium text-card-foreground">83,333</span>
                       </div>
-                      <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                        <span className="text-sm text-gray-600">Sender Names</span>
-                        <span className="font-medium text-gray-900">25</span>
+                      <div className="flex justify-between items-center py-2 border-b border-border">
+                        <span className="text-sm text-muted-foreground">Sender Names</span>
+                        <span className="font-medium text-card-foreground">25</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
-                        <span className="text-sm text-gray-600">API Access</span>
-                        <span className="font-medium text-green-600">✓</span>
+                        <span className="text-sm text-muted-foreground">API Access</span>
+                        <span className="font-medium text-accent">✓</span>
                       </div>
                     </div>
                     
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700" asChild>
+                    <Button className="w-full" asChild>
                       <a href="/register">ซื้อแพ็กเกจ</a>
                     </Button>
                   </div>
                 </div>
 
                 {/* Corporate Package 3 - Premium */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                <div className="bg-card border border-border rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                    <span className="bg-accent text-accent-foreground px-4 py-1 rounded-full text-sm font-medium">
                       Premium
                     </span>
                   </div>
                   
                   <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900 mb-2">฿100,000</div>
-                    <div className="text-sm text-gray-600 mb-4">0.25 บาท/เครดิต</div>
+                    <div className="text-3xl font-bold text-card-foreground mb-2">฿100,000</div>
+                    <div className="text-sm text-muted-foreground mb-4">0.25 บาท/เครดิต</div>
                     
                     <div className="space-y-3 mb-6">
-                      <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                        <span className="text-sm text-gray-600">เครดิต</span>
-                        <span className="font-medium text-gray-900">400,000</span>
+                      <div className="flex justify-between items-center py-2 border-b border-border">
+                        <span className="text-sm text-muted-foreground">เครดิต</span>
+                        <span className="font-medium text-card-foreground">400,000</span>
                       </div>
-                      <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                        <span className="text-sm text-gray-600">Sender Names</span>
-                        <span className="font-medium text-gray-900">ไม่จำกัด</span>
+                      <div className="flex justify-between items-center py-2 border-b border-border">
+                        <span className="text-sm text-muted-foreground">Sender Names</span>
+                        <span className="font-medium text-card-foreground">ไม่จำกัด</span>
                       </div>
                       <div className="flex justify-between items-center py-2">
-                        <span className="text-sm text-gray-600">API Access</span>
-                        <span className="font-medium text-green-600">✓</span>
+                        <span className="text-sm text-muted-foreground">API Access</span>
+                        <span className="font-medium text-accent">✓</span>
                       </div>
                     </div>
                     
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700" asChild>
+                    <Button className="w-full" asChild>
                       <a href="/register">ซื้อแพ็กเกจ</a>
                     </Button>
                   </div>
@@ -260,20 +260,20 @@ const Pricing = () => {
       </section>
 
       {/* Promotion Banner */}
-      <section className="py-12 bg-gradient-to-r from-blue-900 to-blue-700">
+      <section className="py-12 hero-gradient">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between max-w-6xl mx-auto">
-            <div className="text-white text-center md:text-left mb-6 md:mb-0">
+            <div className="text-primary-foreground text-center md:text-left mb-6 md:mb-0">
               <h2 className="text-3xl md:text-4xl font-bold mb-2">
-                สิ้นปีอครัปเตรูลูกค์ใน! 20%
+                สิ้นปีนี้ ฉลองด้วยส่วนลดพิเศษ 20%
               </h2>
-              <p className="text-blue-200 text-lg">
+              <p className="text-primary-foreground/80 text-lg">
                 ส่วนลดพิเศษ 20% สำหรับการซื้อแพ็กเกจครั้งแรก
               </p>
             </div>
             <div className="flex items-center space-x-6">
               <div className="text-6xl">👩‍💼</div>
-              <Button size="lg" className="bg-white text-blue-900 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
+              <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 px-8 py-3 text-lg font-semibold">
                 สมัครเลย
               </Button>
             </div>
@@ -282,72 +282,72 @@ const Pricing = () => {
       </section>
 
       {/* Detailed Comparison Table - ตามภาพที่ให้มา */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-muted">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-12">
               ราคาแพ็กเกจ
             </h2>
-            <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-md">
+            <div className="bg-card border border-border rounded-lg overflow-hidden shadow-md">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-blue-600">
+                  <thead className="bg-primary">
                     <tr>
-                      <th className="text-left px-6 py-4 font-semibold text-white">Package</th>
-                      <th className="text-center px-6 py-4 font-semibold text-white">฿ 1,500</th>
-                      <th className="text-center px-6 py-4 font-semibold text-white">฿ 3,500</th>
-                      <th className="text-center px-6 py-4 font-semibold text-white">฿ 10,000</th>
-                      <th className="text-center px-6 py-4 font-semibold text-white">฿ 30,000</th>
-                      <th className="text-center px-6 py-4 font-semibold text-white">฿ 150,000</th>
+                      <th className="text-left px-6 py-4 font-semibold text-primary-foreground">Package</th>
+                      <th className="text-center px-6 py-4 font-semibold text-primary-foreground">฿ 1,500</th>
+                      <th className="text-center px-6 py-4 font-semibold text-primary-foreground">฿ 3,500</th>
+                      <th className="text-center px-6 py-4 font-semibold text-primary-foreground">฿ 10,000</th>
+                      <th className="text-center px-6 py-4 font-semibold text-primary-foreground">฿ 30,000</th>
+                      <th className="text-center px-6 py-4 font-semibold text-primary-foreground">฿ 150,000</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    <tr className="bg-gray-50">
-                      <td className="px-6 py-4 text-gray-900 font-medium">ราคาต่อเครดิต</td>
-                      <td className="px-6 py-4 text-center text-gray-700">0.49</td>
-                      <td className="px-6 py-4 text-center text-gray-700">0.41</td>
-                      <td className="px-6 py-4 text-center text-gray-700">0.37</td>
-                      <td className="px-6 py-4 text-center text-gray-700">0.33</td>
-                      <td className="px-6 py-4 text-center text-gray-700">0.30</td>
+                  <tbody className="divide-y divide-border">
+                    <tr className="bg-muted/50">
+                      <td className="px-6 py-4 text-foreground font-medium">ราคาต่อเครดิต</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">0.49</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">0.41</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">0.37</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">0.33</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">0.30</td>
                     </tr>
                     <tr>
-                      <td className="px-6 py-4 text-gray-900 font-medium">ปริมาณเครดิต</td>
-                      <td className="px-6 py-4 text-center text-gray-700">3,061</td>
-                      <td className="px-6 py-4 text-center text-gray-700">8,537</td>
-                      <td className="px-6 py-4 text-center text-gray-700">27,027</td>
-                      <td className="px-6 py-4 text-center text-gray-700">90,910</td>
-                      <td className="px-6 py-4 text-center text-gray-700">500,000</td>
+                      <td className="px-6 py-4 text-foreground font-medium">ปริมาณเครดิต</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">3,061</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">8,537</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">27,027</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">90,910</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">500,000</td>
                     </tr>
-                    <tr className="bg-gray-50">
-                      <td className="px-6 py-4 text-gray-900 font-medium">OTP Ready to use</td>
-                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
-                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
-                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
-                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
-                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
-                    </tr>
-                    <tr>
-                      <td className="px-6 py-4 text-gray-900 font-medium">อายุการใช้งาน (เดือน)</td>
-                      <td className="px-6 py-4 text-center text-gray-700">12</td>
-                      <td className="px-6 py-4 text-center text-gray-700">12</td>
-                      <td className="px-6 py-4 text-center text-gray-700">24</td>
-                      <td className="px-6 py-4 text-center text-gray-700">24</td>
-                      <td className="px-6 py-4 text-center text-gray-700">24</td>
-                    </tr>
-                    <tr className="bg-gray-50">
-                      <td className="px-6 py-4 text-gray-900 font-medium">จำนวนชื่อผู้ส่ง</td>
-                      <td className="px-6 py-4 text-center text-gray-700">1</td>
-                      <td className="px-6 py-4 text-center text-gray-700">1</td>
-                      <td className="px-6 py-4 text-center text-gray-700">2</td>
-                      <td className="px-6 py-4 text-center text-gray-700">2</td>
-                      <td className="px-6 py-4 text-center text-gray-700">5</td>
+                    <tr className="bg-muted/50">
+                      <td className="px-6 py-4 text-foreground font-medium">OTP Ready to use</td>
+                      <td className="px-6 py-4 text-center text-primary">✓</td>
+                      <td className="px-6 py-4 text-center text-primary">✓</td>
+                      <td className="px-6 py-4 text-center text-primary">✓</td>
+                      <td className="px-6 py-4 text-center text-primary">✓</td>
+                      <td className="px-6 py-4 text-center text-primary">✓</td>
                     </tr>
                     <tr>
-                      <td className="px-6 py-4 text-gray-900 font-medium">Sms Tracking</td>
-                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
-                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
-                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
-                      <td className="px-6 py-4 text-center text-blue-600">✓</td>
+                      <td className="px-6 py-4 text-foreground font-medium">อายุการใช้งาน (เดือน)</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">12</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">12</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">24</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">24</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">24</td>
+                    </tr>
+                    <tr className="bg-muted/50">
+                      <td className="px-6 py-4 text-foreground font-medium">จำนวนชื่อผู้ส่ง</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">1</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">1</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">2</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">2</td>
+                      <td className="px-6 py-4 text-center text-muted-foreground">5</td>
+                    </tr>
+                    <tr>
+                      <td className="px-6 py-4 text-foreground font-medium">Sms Tracking</td>
+                      <td className="px-6 py-4 text-center text-primary">✓</td>
+                      <td className="px-6 py-4 text-center text-primary">✓</td>
+                      <td className="px-6 py-4 text-center text-primary">✓</td>
+                      <td className="px-6 py-4 text-center text-primary">✓</td>
                       <td className="px-6 py-4 text-center text-blue-600">✓</td>
                     </tr>
                     <tr className="bg-gray-50">

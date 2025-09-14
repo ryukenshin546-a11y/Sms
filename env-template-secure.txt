@@ -1,0 +1,57 @@
+# Environment Variables Template for OTP System
+# Phase 2.3: Data Encryption and Secrets Management
+# Copy this to .env.local and fill in your actual values
+
+# === SMS UP Plus API Configuration ===
+SMS_UP_PLUS_API_URL=https://web.smsup-plus.com
+SMS_UP_PLUS_TOKEN_ENDPOINT=/api/Token
+SMS_UP_PLUS_OTP_ENDPOINT=/OTP/requestOTP
+SMS_UP_PLUS_VERIFY_ENDPOINT=/OTP/verifyOTP
+
+# SMS UP Plus Credentials (SENSITIVE - DO NOT COMMIT)
+SMS_UP_PLUS_USERNAME=Landingpage
+SMS_UP_PLUS_PASSWORD=@Atoz123
+
+# === Supabase Configuration ===
+SUPABASE_URL=https://mnhdueclyzwtfkmwttkc.supabase.co
+SUPABASE_PUBLISHABLE_DEFAULT_KEY=sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH
+
+# === Encryption Configuration ===
+ENCRYPTION_ENABLED=true
+ENCRYPTION_ALGORITHM=AES-256-GCM
+ENCRYPTION_KEY_SIZE=32
+ENCRYPTION_IV_SIZE=12
+
+# Master Encryption Key (CRITICAL - GENERATE SECURE KEY)
+# Generate with: openssl rand -base64 32
+ENCRYPTION_MASTER_KEY=your_base64_encoded_encryption_key_here
+
+# === Security Settings ===
+TOKEN_EXPIRY_MINUTES=60
+MAX_RETRY_ATTEMPTS=3
+
+# === Rate Limiting Configuration ===
+RATE_LIMIT_IP_SEND=5
+RATE_LIMIT_IP_VERIFY=10
+RATE_LIMIT_PHONE_SEND=3
+RATE_LIMIT_PHONE_VERIFY=5
+RATE_LIMIT_WINDOW_MS=300000
+
+# === Monitoring and Alerts ===
+ALERT_EMAIL=admin@yourdomain.com
+SLACK_WEBHOOK_URL=your_slack_webhook_url_here
+
+# === Production Environment ===
+NODE_ENV=production
+LOG_LEVEL=info
+ENABLE_DEBUG=false
+
+# === API Security ===
+API_KEY_ROTATION_DAYS=30
+JWT_SECRET=your_jwt_secret_here
+CORS_ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+
+# === Database Security ===
+DB_ENCRYPTION_AT_REST=true
+DB_CONNECTION_TIMEOUT=30000
+DB_MAX_CONNECTIONS=20

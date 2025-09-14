@@ -1,4 +1,4 @@
-# 🤖 SMS Auto-Bot System
+# 🤖 SMS-UP+ Auto-Bot System
 
 > **Automated SMS Sub Account Creation System**  
 > ระบบสร้าง SMS Sub Accounts อัตโนมัติด้วย Puppeteer และ Web Interface
@@ -12,7 +12,7 @@
 
 ## 🎯 **Overview**
 
-SMS Auto-Bot System เป็นระบบอัตโนมัติสำหรับสร้าง SMS Sub Accounts บนเว็บไซต์ https://web.smsup-plus.com โดยใช้ Puppeteer ในการควบคุมเบราว์เซอร์จริง พร้อมด้วย Web Interface ที่ใช้งานง่ายสำหรับผู้ใช้
+SMS-UP+ Auto-Bot System เป็นระบบอัตโนมัติสำหรับสร้าง SMS Sub Accounts บนเว็บไซต์ SMS-UP+ โดยใช้ Puppeteer ในการควบคุมเบราว์เซอร์จริง พร้อมด้วย Web Interface ที่ใช้งานง่ายสำหรับผู้ใช้
 
 ### ✨ **Key Features**
 - 🤖 **Full Browser Automation** - ควบคุมเบราว์เซอร์จริงด้วย Puppeteer
@@ -86,7 +86,7 @@ Sms/
 ## 🔧 **Features**
 
 ### 🤖 **Auto-Bot Engine**
-- **Target Website:** https://web.smsup-plus.com
+- **Target Website:** SMS-UP+
 - **Automation Flow:** Login → Account Management → SUB ACCOUNTS → Create → Confirm
 - **Data Generation:** Account Name, Username, Email, Secure Password
 - **Success Rate:** 95%+ reliability

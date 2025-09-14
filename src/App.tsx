@@ -13,6 +13,10 @@ import MobyClone from "./pages/MobyClone";
 import Profile from "./pages/Profile";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import OTPDemo from "./pages/OTPDemo";
+import OTPTestPage from "./pages/OTPTestPage";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import PerformanceTest from "./pages/PerformanceTest";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +34,10 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/moby-clone" element={<MobyClone />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/otp-demo" element={<OTPDemo />} />
+          <Route path="/otp-test" element={<OTPTestPage />} />
+          <Route path="/analytics" element={<AnalyticsDashboard />} />
+          <Route path="/performance" element={<PerformanceTest />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Edge Functions</title>
+</head>
+<body>
+    <h1>Test Supabase Edge Functions</h1>
+    <button onclick="testSendOTP()">Test Send OTP</button>
+    <div id="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Initialize Supabase client
+        const supabaseUrl = 'https://mnhdueclyzwtfkmwttkc.supabase.co'
+        const supabaseKey = 'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH'
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey)
+
+        async function testSendOTP() {
+            const resultDiv = document.getElementById('result')
+            resultDiv.innerHTML = 'Testing...'
+
+            try {
+                console.log('🚀 Testing Edge Function...')
+                
+                const { data, error } = await supabase.functions.invoke('otp-send', {
+                    body: {
+                        phoneNumber: '66812345678'
+                    }
+                })
+
+                if (error) {
+                    console.error('❌ Error:', error)
+                    resultDiv.innerHTML = `<div style="color: red">Error: ${JSON.stringify(error, null, 2)}</div>`
+                } else {
+                    console.log('✅ Success:', data)
+                    resultDiv.innerHTML = `<div style="color: green">Success: ${JSON.stringify(data, null, 2)}</div>`
+                }
+            } catch (err) {
+                console.error('💥 Exception:', err)
+                resultDiv.innerHTML = `<div style="color: red">Exception: ${err.message}</div>`
+            }
+        }
+
+        // Auto-test on load
+        // testSendOTP()
+    </script>
+</body>
+</html>

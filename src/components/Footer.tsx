@@ -63,7 +63,7 @@ const Footer = () => {
             {/* Company Info */}
             <div className="md:col-span-2 lg:col-span-2 space-y-6">
               <div className="text-2xl md:text-3xl font-bold text-primary">
-                MarketPro
+                SMS-UP+
               </div>
               <p className="text-muted-foreground leading-relaxed max-w-md">
                 แพลตฟอร์มการตลาดดิจิทัลที่ครบครันที่สุดในประเทศไทย 
@@ -74,7 +74,7 @@ const Footer = () => {
               <div className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <Mail className="h-5 w-5 text-primary" />
-                  <span className="text-muted-foreground">contact@marketpro.co.th</span>
+                  <span className="text-muted-foreground">contact@smsup-plus.com</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Phone className="h-5 w-5 text-primary" />
@@ -206,7 +206,7 @@ const Footer = () => {
         <div className="py-6 border-t border-border">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-muted-foreground text-sm">
-              © 2024 MarketPro. สงวนลิขสิทธิ์ทุกประการ
+              © 2024 SMS-UP+. สงวนลิขสิทธิ์ทุกประการ
             </div>
             <div className="flex items-center space-x-6 text-sm text-muted-foreground">
               <span>เวอร์ชัน 2.1.0</span>

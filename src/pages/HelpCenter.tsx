@@ -161,10 +161,10 @@ const HelpCenter = () => {
                   ส่งคำถามมาที่อีเมลแล้วเราจะตอบกลับภายใน 24 ชั่วโมง
                 </p>
                 <a 
-                  href="mailto:support@marketpro.com" 
+                  href="mailto:support@smsup-plus.com" 
                   className="text-primary font-medium hover:text-primary-hover transition-professional"
                 >
-                  support@marketpro.com
+                  support@smsup-plus.com
                 </a>
               </div>
               

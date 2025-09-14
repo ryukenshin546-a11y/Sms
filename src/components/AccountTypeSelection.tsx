@@ -4,8 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { User, Building, Check } from 'lucide-react';
 
 interface AccountTypeSelectionProps {
-  selectedType: 'individual' | 'corporate' | null;
-  onTypeSelect: (type: 'individual' | 'corporate') => void;
+  selectedType: 'personal' | 'corporate' | null;
+  onTypeSelect: (type: 'personal' | 'corporate') => void;
 }
 
 const AccountTypeSelection: React.FC<AccountTypeSelectionProps> = ({
@@ -14,7 +14,7 @@ const AccountTypeSelection: React.FC<AccountTypeSelectionProps> = ({
 }) => {
   const accountTypes = [
     {
-      id: 'individual' as const,
+      id: 'personal' as const,
       title: 'บุคคลธรรมดา',
       icon: <User className="h-5 w-5" />,
       benefits: [
