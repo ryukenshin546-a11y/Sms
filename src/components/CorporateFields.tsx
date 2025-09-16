@@ -22,7 +22,7 @@ interface CorporateFieldsProps {
     useSameAddressForBilling: boolean;
     billingAddress: string;
   };
-  onChange: (field: string, value: string) => void;
+  onChange: (field: string, value: string | boolean) => void;
   errors: Record<string, string>;
 }
 
@@ -249,7 +249,7 @@ const CorporateFields: React.FC<CorporateFieldsProps> = ({
               id="useSameAddressForBilling"
               checked={formData.useSameAddressForBilling}
               onCheckedChange={(checked) => {
-                onChange('useSameAddressForBilling', checked as boolean ? 'true' : 'false');
+                onChange('useSameAddressForBilling', checked);
               }}
             />
             <Label htmlFor="useSameAddressForBilling" className="text-sm">

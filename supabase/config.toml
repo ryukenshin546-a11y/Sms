@@ -31,3 +31,15 @@ entrypoint = "./functions/otp-send-new/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/otp-send-new/*.html" ]
+
+[functions.send-email-verification]
+enabled = true
+verify_jwt = false
+import_map = "./functions/send-email-verification/deno.json"
+entrypoint = "./functions/send-email-verification/index.ts"
+
+[functions.send-custom-email]
+enabled = true
+verify_jwt = false
+import_map = "./functions/send-custom-email/deno.json"
+entrypoint = "./functions/send-custom-email/index.ts"

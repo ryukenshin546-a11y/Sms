@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Link Token Verification Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 15px; margin: 5px; border: none; border-radius: 3px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 11px; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 3px; }
+        .log { max-height: 400px; overflow-y: auto; font-size: 12px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Magic Link Token Verification Test</h1>
+        
+        <div class="section info">
+            <h3>🎯 จุดประสงค์:</h3>
+            <p>ทดสอบการยืนยัน magic link tokens ด้วยวิธีต่างๆ เพื่อหาวิธีที่ถูกต้องสำหรับ tokens ที่ได้จาก <code>signInWithOtp()</code></p>
+        </div>
+
+        <div class="section warning">
+            <h3>⚠️ การใช้งาน:</h3>
+            <ol>
+                <li><strong>ส่ง Magic Link:</strong> ใช้แอปหลักส่งอีเมลยืนยัน</li>
+                <li><strong>ดู URL:</strong> เช็ค URL ใน magic link ที่ได้รับ</li>
+                <li><strong>Copy Token:</strong> นำ token จาก URL มาใส่ในช่องด้านล่าง</li>
+                <li><strong>ทดสอบ:</strong> ใช้เครื่องมือนี้ทดสอบ verification methods</li>
+            </ol>
+        </div>
+
+        <div class="grid">
+            <div>
+                <div class="section">
+                    <h3>📧 Magic Link Testing</h3>
+                    <button class="btn-primary" onclick="sendTestMagicLink()">🚀 Send Test Magic Link</button>
+                    <input type="email" id="testEmail" placeholder="your-email@example.com" />
+                    <div id="sendResult" style="margin-top: 10px; padding: 10px; border-radius: 3px;"></div>
+                </div>
+
+                <div class="section">
+                    <h3>🔗 URL Analysis</h3>
+                    <label>Magic Link URL:</label>
+                    <textarea id="magicLinkUrl" rows="3" placeholder="Paste the magic link URL here..."></textarea>
+                    <button class="btn-secondary" onclick="analyzeMagicLink()">🔍 Analyze URL</button>
+                    <div id="urlAnalysis"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="section">
+                    <h3>🧪 Token Verification Tests</h3>
+                    <label>Token:</label>
+                    <input type="text" id="tokenInput" placeholder="Extract token from magic link..." />
+                    <div style="margin: 10px 0;">
+                        <button class="btn-success" onclick="testMagicLinkVerification()">🔗 Test Magic Link</button>
+                        <button class="btn-secondary" onclick="testEmailVerification()">📧 Test Email</button>
+                        <button class="btn-secondary" onclick="testSignupVerification()">📝 Test Signup</button>
+                    </div>
+                    <button class="btn-danger" onclick="testAllMethods()">💥 Test All Methods</button>
+                    <div id="verificationResults"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📊 Test Results</h3>
+            <div id="testLog" class="log">
+                <p><em>เริ่มการทดสอบ...</em></p>
+            </div>
+        </div>
+
+        <div class="section info">
+            <h3>💡 Token Types & Methods</h3>
+            <div class="grid">
+                <div>
+                    <h4>🔗 Magic Link (signInWithOtp)</h4>
+                    <ul style="font-size: 13px;">
+                        <li><strong>Type:</strong> 'magiclink'</li>
+                        <li><strong>Use:</strong> User authentication via email</li>
+                        <li><strong>URL:</strong> Contains token_hash parameter</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>📧 Email Confirmation</h4>
+                    <ul style="font-size: 13px;">
+                        <li><strong>Type:</strong> 'email'</li>
+                        <li><strong>Use:</strong> Email address verification</li>
+                        <li><strong>URL:</strong> May contain token or token_hash</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let supabase = null;
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('testLog');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+            
+            const entry = `[${timestamp}] ${message}`;
+            
+            logDiv.innerHTML += `
+                <div class="section ${className}" style="margin: 5px 0; padding: 8px;">
+                    <strong>${entry}</strong>
+                </div>
+            `;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(entry);
+        }
+
+        function initSupabase() {
+            try {
+                const url = 'https://mnhdueclyzwtfkmwttkc.supabase.co';
+                const key = 'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH';
+                
+                supabase = window.supabase.createClient(url, key);
+                log('✅ Supabase initialized successfully', 'success');
+            } catch (error) {
+                log(`❌ Supabase initialization failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function sendTestMagicLink() {
+            if (!supabase) {
+                log('❌ Supabase not initialized', 'error');
+                return;
+            }
+
+            const email = document.getElementById('testEmail').value;
+            if (!email) {
+                log('❌ Please enter email address', 'error');
+                return;
+            }
+
+            const sendDiv = document.getElementById('sendResult');
+            sendDiv.innerHTML = '🔄 Sending magic link...';
+            sendDiv.className = 'warning';
+
+            try {
+                log(`📧 Sending magic link to: ${email}`);
+                
+                const { data, error } = await supabase.auth.signInWithOtp({
+                    email: email,
+                    options: {
+                        emailRedirectTo: `${window.location.origin}/verify-email`,
+                        shouldCreateUser: false
+                    }
+                });
+
+                if (error) {
+                    log(`❌ Failed to send magic link: ${error.message}`, 'error');
+                    sendDiv.innerHTML = `❌ Error: ${error.message}`;
+                    sendDiv.className = 'error';
+                } else {
+                    log('✅ Magic link sent successfully', 'success');
+                    sendDiv.innerHTML = `✅ Magic link sent to ${email}!<br><small>Check your email and copy the link here for testing</small>`;
+                    sendDiv.className = 'success';
+                }
+            } catch (error) {
+                log(`💥 Exception: ${error.message}`, 'error');
+                sendDiv.innerHTML = `💥 Exception: ${error.message}`;
+                sendDiv.className = 'error';
+            }
+        }
+
+        function analyzeMagicLink() {
+            const url = document.getElementById('magicLinkUrl').value;
+            if (!url) {
+                log('❌ Please paste magic link URL', 'error');
+                return;
+            }
+
+            try {
+                const urlObj = new URL(url);
+                const params = Object.fromEntries(urlObj.searchParams.entries());
+                
+                log('🔍 Magic Link URL Analysis:');
+                log(`   • Base URL: ${urlObj.origin}${urlObj.pathname}`);
+                log(`   • Parameters: ${JSON.stringify(params, null, 2)}`);
+
+                const analysisDiv = document.getElementById('urlAnalysis');
+                let analysis = '<div class="info" style="margin-top: 10px; padding: 10px;">';
+                analysis += '<h4>🔍 URL Analysis Results:</h4>';
+                analysis += `<p><strong>Base:</strong> ${urlObj.origin}${urlObj.pathname}</p>`;
+                
+                if (params.token_hash) {
+                    analysis += `<p><strong>Token Hash:</strong> ${params.token_hash}</p>`;
+                    document.getElementById('tokenInput').value = params.token_hash;
+                }
+                if (params.token) {
+                    analysis += `<p><strong>Token:</strong> ${params.token}</p>`;
+                    if (!params.token_hash) document.getElementById('tokenInput').value = params.token;
+                }
+                if (params.type) {
+                    analysis += `<p><strong>Type:</strong> ${params.type}</p>`;
+                }
+                if (params.error) {
+                    analysis += `<p><strong>Error:</strong> ${params.error}</p>`;
+                }
+
+                analysis += '</div>';
+                analysisDiv.innerHTML = analysis;
+
+                log('✅ URL analysis completed', 'success');
+            } catch (error) {
+                log(`❌ Invalid URL: ${error.message}`, 'error');
+                document.getElementById('urlAnalysis').innerHTML = `<div class="error">❌ Invalid URL</div>`;
+            }
+        }
+
+        async function verifyWithMethod(token, type, methodName) {
+            if (!supabase) {
+                log('❌ Supabase not initialized', 'error');
+                return null;
+            }
+
+            try {
+                log(`🧪 Testing ${methodName} verification...`);
+                
+                const { data, error } = await supabase.auth.verifyOtp({
+                    token_hash: token,
+                    type: type
+                });
+
+                if (error) {
+                    log(`❌ ${methodName} failed: ${error.message}`, 'error');
+                    return { success: false, error, method: methodName };
+                } else {
+                    log(`✅ ${methodName} succeeded!`, 'success');
+                    log(`   • User: ${data.user?.email || 'No user'}`);
+                    log(`   • Session: ${data.session ? 'Created' : 'No session'}`);
+                    return { success: true, data, method: methodName };
+                }
+            } catch (exception) {
+                log(`💥 ${methodName} exception: ${exception.message}`, 'error');
+                return { success: false, error: exception, method: methodName };
+            }
+        }
+
+        async function testMagicLinkVerification() {
+            const token = document.getElementById('tokenInput').value;
+            if (!token) {
+                log('❌ Please enter token', 'error');
+                return;
+            }
+
+            const result = await verifyWithMethod(token, 'magiclink', 'Magic Link');
+            updateVerificationResults(result);
+        }
+
+        async function testEmailVerification() {
+            const token = document.getElementById('tokenInput').value;
+            if (!token) {
+                log('❌ Please enter token', 'error');
+                return;
+            }
+
+            const result = await verifyWithMethod(token, 'email', 'Email Confirmation');
+            updateVerificationResults(result);
+        }
+
+        async function testSignupVerification() {
+            const token = document.getElementById('tokenInput').value;
+            if (!token) {
+                log('❌ Please enter token', 'error');
+                return;
+            }
+
+            const result = await verifyWithMethod(token, 'signup', 'Signup Confirmation');
+            updateVerificationResults(result);
+        }
+
+        async function testAllMethods() {
+            const token = document.getElementById('tokenInput').value;
+            if (!token) {
+                log('❌ Please enter token', 'error');
+                return;
+            }
+
+            log('🔥 Testing all verification methods...', 'warning');
+            
+            const methods = [
+                { type: 'magiclink', name: 'Magic Link' },
+                { type: 'email', name: 'Email Confirmation' },
+                { type: 'signup', name: 'Signup Confirmation' }
+            ];
+
+            let successfulMethod = null;
+            const results = [];
+
+            for (const method of methods) {
+                const result = await verifyWithMethod(token, method.type, method.name);
+                results.push(result);
+                
+                if (result && result.success && !successfulMethod) {
+                    successfulMethod = result;
+                }
+            }
+
+            // Show summary
+            log('📊 All Methods Test Summary:', 'info');
+            results.forEach(result => {
+                if (result) {
+                    const status = result.success ? '✅' : '❌';
+                    log(`   ${status} ${result.method}: ${result.success ? 'SUCCESS' : result.error.message}`);
+                }
+            });
+
+            if (successfulMethod) {
+                log(`🎯 Recommended method: ${successfulMethod.method}`, 'success');
+            } else {
+                log('❌ No method worked - token may be invalid or expired', 'error');
+            }
+
+            updateVerificationResults(successfulMethod || results[0]);
+        }
+
+        function updateVerificationResults(result) {
+            const resultsDiv = document.getElementById('verificationResults');
+            
+            if (!result) {
+                resultsDiv.innerHTML = '<div class="error">❌ No result</div>';
+                return;
+            }
+
+            let html = `<div class="${result.success ? 'success' : 'error'}" style="margin-top: 10px; padding: 10px;">`;
+            html += `<h4>${result.success ? '✅' : '❌'} ${result.method} Result</h4>`;
+            
+            if (result.success && result.data) {
+                html += `<p><strong>User:</strong> ${result.data.user?.email || 'N/A'}</p>`;
+                html += `<p><strong>Session:</strong> ${result.data.session ? 'Created' : 'No session'}</p>`;
+                if (result.data.user?.email_confirmed_at) {
+                    html += `<p><strong>Email Confirmed:</strong> ${new Date(result.data.user.email_confirmed_at).toLocaleString()}</p>`;
+                }
+            } else if (result.error) {
+                html += `<p><strong>Error:</strong> ${result.error.message}</p>`;
+            }
+            
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+        }
+
+        // Auto-initialize
+        window.onload = function() {
+            initSupabase();
+            log('🚀 Magic Link Token Verification Test loaded');
+            
+            // Pre-fill email if available
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email');
+            if (email) {
+                document.getElementById('testEmail').value = email;
+                log(`📧 Pre-filled email: ${email}`);
+            }
+        };
+    </script>
+</body>
+</html>

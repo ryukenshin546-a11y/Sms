@@ -1,7 +1,7 @@
 /**
  * Supabase Edge Functions OTP Service
  * ใช้ Edge Functions แทนการเรียก API โดยตรง
- * Updated: September 14, 2025
+ * Updated: September 15, 2025 - Fixed function name
  */
 
 import { supabase } from '../lib/supabase';
@@ -54,25 +54,20 @@ export class EdgeFunctionOTPService {
     try {
       console.log('📤 Calling SMS UP Plus Edge Function...')
       
-      // Ensure we have an anonymous session for Edge Function calls
+      // Try to get current session, but don't require it for registration flow
       const { data: { session } } = await supabase.auth.getSession()
       
       if (!session) {
-        console.log('🔑 Creating anonymous session...')
-        const { error: signInError } = await supabase.auth.signInAnonymously()
-        if (signInError) {
-          console.error('❌ Anonymous sign-in error:', signInError)
-          // Continue anyway - function might still work
-        } else {
-          console.log('✅ Anonymous session created')
-        }
+        console.log('⚠️ No authenticated session - using service role for registration flow')
+      } else {
+        console.log('🔑 Using authenticated session for Edge Function call')
       }
       
-      // Use the new SMS UP Plus function
+      // Use the new SMS UP Plus function (works with or without user session)
       const { data, error } = await supabase.functions.invoke('otp-send-new', {
         body: {
           phoneNumber: request.phoneNumber,
-          userId: request.userId
+          userId: request.userId || (session?.user?.id || 'registration-' + Date.now())
         }
       })
 

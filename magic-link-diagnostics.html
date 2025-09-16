@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Magic Link Diagnostics</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 15px; margin: 5px; border: none; border-radius: 3px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 11px; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { padding: 8px; text-align: left; border: 1px solid #ddd; font-size: 12px; }
+        th { background: #f8f9fa; font-weight: bold; }
+        .status-good { color: #28a745; font-weight: bold; }
+        .status-bad { color: #dc3545; font-weight: bold; }
+        .status-warning { color: #ffc107; font-weight: bold; }
+        .log { max-height: 400px; overflow-y: auto; font-size: 12px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .test-result { padding: 10px; border-radius: 5px; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔬 Advanced Magic Link Diagnostics</h1>
+        
+        <div class="section warning">
+            <h3>⚠️ สรุปปัญหา:</h3>
+            <p><strong>อาการ:</strong> Magic link ส่งได้แค่ครั้งเดียว แม้จะตั้ง Rate Limit = 60 emails/hour แล้ว</p>
+            <p><strong>จุดประสงค์:</strong> ตรวจสอบว่าเป็นปัญหาจากระบบของเราหรือ Supabase internal</p>
+        </div>
+
+        <div class="section info">
+            <h3>📊 Rate Limit Analysis (จากภาพ)</h3>
+            <table>
+                <tr><th>Setting</th><th>Value</th><th>Status</th></tr>
+                <tr><td>Email Rate Limit</td><td>60 per hour</td><td class="status-good">✅ เพียงพอ</td></tr>
+                <tr><td>Token Verifications</td><td>30 per 5 minutes</td><td class="status-good">✅ ปกติ</td></tr>
+                <tr><td>Sign ups/ins</td><td>30 per 5 minutes</td><td class="status-good">✅ ปกติ</td></tr>
+            </table>
+        </div>
+
+        <div class="grid">
+            <div>
+                <div class="section">
+                    <h3>🔧 Diagnostic Controls</h3>
+                    <button class="btn-primary" onclick="initializeTest()">🚀 Initialize Test</button>
+                    <button class="btn-secondary" onclick="checkSessionState()">🔍 Check Session</button>
+                    <button class="btn-secondary" onclick="clearAllStates()">🧹 Clear All States</button>
+                    <hr>
+                    <button class="btn-success" onclick="testMagicLink()">📧 Test Magic Link</button>
+                    <button class="btn-secondary" onclick="testImmediateResend()">⚡ Test Immediate Resend</button>
+                    <button class="btn-secondary" onclick="testDirectSupabaseCall()">🎯 Test Direct API</button>
+                    <button class="btn-danger" onclick="runStressTest()">💥 Stress Test (5 sends)</button>
+                </div>
+
+                <div class="section">
+                    <h3>📧 Email Input</h3>
+                    <input type="email" id="testEmail" placeholder="your-email@example.com" style="width: 100%; padding: 8px;" />
+                    <div class="test-result" id="emailStatus">Ready for testing...</div>
+                </div>
+            </div>
+
+            <div>
+                <div class="section">
+                    <h3>📊 Live Status</h3>
+                    <table id="liveStatus">
+                        <tr><th>Component</th><th>Status</th><th>Details</th></tr>
+                        <tr><td>Supabase Client</td><td class="status-warning">⏳ Initializing...</td><td>-</td></tr>
+                        <tr><td>User Session</td><td class="status-warning">⏳ Checking...</td><td>-</td></tr>
+                        <tr><td>Last Magic Link</td><td class="status-warning">⏳ None</td><td>-</td></tr>
+                        <tr><td>Rate Limit Status</td><td class="status-warning">⏳ Unknown</td><td>-</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>🧪 Test Scenarios</h3>
+            <div class="grid">
+                <div>
+                    <h4>🔬 Scenario 1: Internal App Test</h4>
+                    <button class="btn-primary" onclick="runAppFlowTest()">Test App Flow</button>
+                    <div id="appTestResult" class="test-result"></div>
+                </div>
+                <div>
+                    <h4>🎯 Scenario 2: Direct API Test</h4>
+                    <button class="btn-primary" onclick="runDirectAPITest()">Test Direct API</button>
+                    <div id="directTestResult" class="test-result"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📝 Diagnostic Log</h3>
+            <div id="diagnosticLog" class="log">
+                <p><em>เริ่มการทดสอบ...</em></p>
+            </div>
+        </div>
+
+        <div class="section info">
+            <h3>💡 สาเหตุที่เป็นไปได้</h3>
+            <div class="grid">
+                <div>
+                    <h4>🔴 Internal Issues (ในระบบเรา)</h4>
+                    <ul style="font-size: 13px;">
+                        <li>Browser cache/session conflicts</li>
+                        <li>Duplicate prevention logic ใน app</li>
+                        <li>Auth state ไม่ consistent</li>
+                        <li>Client-side rate limiting</li>
+                        <li>Network/CORS ปัญหา</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>🟠 External Issues (Supabase)</h4>
+                    <ul style="font-size: 13px;">
+                        <li>Hidden rate limits นอกจากที่ตั้งค่า</li>
+                        <li>Email provider throttling</li>
+                        <li>Supabase internal queuing</li>
+                        <li>IP-based rate limiting</li>
+                        <li>Account-level restrictions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let supabase = null;
+        let testLog = [];
+        let testCounter = 0;
+        let lastMagicLinkTime = null;
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('diagnosticLog');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+            
+            const entry = `[${timestamp}] ${message}`;
+            testLog.push({ time: timestamp, message, type });
+            
+            logDiv.innerHTML += `
+                <div class="section ${className}" style="margin: 5px 0; padding: 8px;">
+                    <strong>${entry}</strong>
+                </div>
+            `;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(entry);
+        }
+
+        function updateStatus(component, status, details) {
+            const table = document.getElementById('liveStatus');
+            const rows = table.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 3 && cells[0].textContent === component) {
+                    cells[1].innerHTML = status;
+                    cells[2].textContent = details;
+                }
+            });
+        }
+
+        function updateEmailStatus(message, isError = false) {
+            const statusDiv = document.getElementById('emailStatus');
+            statusDiv.textContent = message;
+            statusDiv.className = `test-result ${isError ? 'error' : 'success'}`;
+        }
+
+        function initializeTest() {
+            log('🚀 Initializing Advanced Magic Link Diagnostics...');
+            
+            try {
+                // Initialize Supabase with correct credentials
+                const url = 'https://mnhdueclyzwtfkmwttkc.supabase.co';
+                const key = 'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH';
+                
+                supabase = window.supabase.createClient(url, key);
+                updateStatus('Supabase Client', '<span class="status-good">✅ Connected</span>', 'Ready');
+                log('✅ Supabase client initialized', 'success');
+                
+                checkSessionState();
+                
+            } catch (error) {
+                updateStatus('Supabase Client', '<span class="status-bad">❌ Failed</span>', error.message);
+                log(`❌ Initialization failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function checkSessionState() {
+            if (!supabase) {
+                log('❌ Supabase not initialized', 'error');
+                return;
+            }
+
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+                if (error || userError) {
+                    updateStatus('User Session', '<span class="status-bad">❌ Error</span>', error?.message || userError?.message);
+                    log(`❌ Session check failed: ${error?.message || userError?.message}`, 'error');
+                } else if (session && user) {
+                    updateStatus('User Session', '<span class="status-good">✅ Active</span>', `${user.email}`);
+                    log(`✅ Active session: ${user.email} (verified: ${user.email_confirmed_at ? 'Yes' : 'No'})`, 'success');
+                } else {
+                    updateStatus('User Session', '<span class="status-warning">⚠️ No Session</span>', 'Not logged in');
+                    log('⚠️ No active session - this may affect magic link behavior', 'warning');
+                }
+            } catch (error) {
+                updateStatus('User Session', '<span class="status-bad">❌ Exception</span>', error.message);
+                log(`💥 Session check exception: ${error.message}`, 'error');
+            }
+        }
+
+        function clearAllStates() {
+            log('🧹 Clearing all states and cache...');
+            
+            // Clear localStorage and sessionStorage
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Clear test variables
+            lastMagicLinkTime = null;
+            testCounter = 0;
+            
+            updateStatus('Last Magic Link', '<span class="status-warning">⏳ Cleared</span>', 'Reset');
+            updateStatus('Rate Limit Status', '<span class="status-warning">⏳ Reset</span>', 'Unknown');
+            
+            log('✅ All states cleared', 'success');
+            updateEmailStatus('States cleared - ready for fresh testing');
+        }
+
+        async function testMagicLink() {
+            if (!supabase) {
+                log('❌ Please initialize first', 'error');
+                return;
+            }
+
+            const email = document.getElementById('testEmail').value;
+            if (!email) {
+                log('❌ Please enter email address', 'error');
+                updateEmailStatus('❌ Email required', true);
+                return;
+            }
+
+            testCounter++;
+            const testId = `Test-${testCounter}`;
+            log(`📧 ${testId}: Testing magic link for ${email}...`);
+            updateEmailStatus(`🔄 Sending magic link (${testId})...`);
+
+            try {
+                const startTime = Date.now();
+                const currentTime = new Date();
+                
+                // Check time since last send
+                if (lastMagicLinkTime) {
+                    const timeDiff = currentTime - lastMagicLinkTime;
+                    const minutesDiff = Math.floor(timeDiff / 60000);
+                    const secondsDiff = Math.floor((timeDiff % 60000) / 1000);
+                    log(`⏰ Time since last send: ${minutesDiff}m ${secondsDiff}s`);
+                }
+
+                const { data, error } = await supabase.auth.signInWithOtp({
+                    email: email,
+                    options: {
+                        emailRedirectTo: `${window.location.origin}/verify-email`,
+                        shouldCreateUser: false
+                    }
+                });
+
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                
+                log(`📊 ${testId} Response (${duration}ms):`);
+                log(`   • Data: ${JSON.stringify(data, null, 2)}`);
+                log(`   • Error: ${error ? JSON.stringify(error, null, 2) : 'null'}`);
+
+                if (error) {
+                    log(`❌ ${testId} Failed: ${error.message}`, 'error');
+                    updateEmailStatus(`❌ ${testId} Failed: ${error.message}`, true);
+                    
+                    // Analyze error type
+                    if (error.message.includes('rate')) {
+                        updateStatus('Rate Limit Status', '<span class="status-bad">❌ Hit Rate Limit</span>', error.message);
+                        log('🚨 Rate limiting detected!', 'warning');
+                    }
+                } else {
+                    log(`✅ ${testId} Success - Magic link request sent`, 'success');
+                    updateEmailStatus(`✅ ${testId} Success - Check email`);
+                    lastMagicLinkTime = currentTime;
+                    updateStatus('Last Magic Link', '<span class="status-good">✅ Sent</span>', currentTime.toLocaleTimeString());
+                }
+
+                // Log network details
+                log(`🌐 Network: ${duration}ms response time`);
+                
+            } catch (error) {
+                log(`💥 ${testId} Exception: ${error.message}`, 'error');
+                updateEmailStatus(`💥 ${testId} Exception: ${error.message}`, true);
+            }
+        }
+
+        async function testImmediateResend() {
+            log('⚡ Testing immediate resend (should trigger rate limit if exists)...');
+            await testMagicLink();
+            
+            setTimeout(async () => {
+                log('⚡ Sending second request immediately...');
+                await testMagicLink();
+            }, 1000); // 1 second delay
+        }
+
+        async function testDirectSupabaseCall() {
+            log('🎯 Testing direct Supabase API call (bypass our code)...');
+            
+            const email = document.getElementById('testEmail').value;
+            if (!email) {
+                log('❌ Email required for direct test', 'error');
+                return;
+            }
+
+            try {
+                // Direct fetch to Supabase auth endpoint
+                const response = await fetch(`https://mnhdueclyzwtfkmwttkc.supabase.co/auth/v1/otp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': 'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH',
+                        'Authorization': 'Bearer sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        create_user: false,
+                        gotrue_meta_security: {}
+                    })
+                });
+
+                const responseData = await response.json();
+                
+                log(`🎯 Direct API Response (${response.status}):`);
+                log(`   • Status: ${response.status} ${response.statusText}`);
+                log(`   • Data: ${JSON.stringify(responseData, null, 2)}`);
+                
+                if (response.ok) {
+                    log('✅ Direct API call successful', 'success');
+                    document.getElementById('directTestResult').innerHTML = 
+                        '<div class="success">✅ Direct API Success</div>';
+                } else {
+                    log('❌ Direct API call failed', 'error');
+                    document.getElementById('directTestResult').innerHTML = 
+                        '<div class="error">❌ Direct API Failed</div>';
+                }
+
+            } catch (error) {
+                log(`💥 Direct API exception: ${error.message}`, 'error');
+                document.getElementById('directTestResult').innerHTML = 
+                    '<div class="error">💥 Direct API Exception</div>';
+            }
+        }
+
+        async function runStressTest() {
+            log('💥 Running stress test (5 rapid sends)...', 'warning');
+            updateEmailStatus('🔥 Running stress test...');
+            
+            const email = document.getElementById('testEmail').value;
+            if (!email) {
+                log('❌ Email required for stress test', 'error');
+                return;
+            }
+
+            for (let i = 1; i <= 5; i++) {
+                log(`💥 Stress Test ${i}/5...`);
+                await testMagicLink();
+                
+                if (i < 5) {
+                    await new Promise(resolve => setTimeout(resolve, 500)); // 500ms between sends
+                }
+            }
+            
+            log('💥 Stress test completed', 'warning');
+            updateEmailStatus('💥 Stress test completed - check logs');
+        }
+
+        async function runAppFlowTest() {
+            log('🔬 Testing App Flow (simulating our component behavior)...');
+            
+            try {
+                // Simulate our useEmailVerification hook behavior
+                const { data: { user } } = await supabase.auth.getUser();
+                
+                if (!user) {
+                    log('❌ App Flow: User not authenticated', 'error');
+                    document.getElementById('appTestResult').innerHTML = 
+                        '<div class="error">❌ User not authenticated</div>';
+                    return;
+                }
+
+                const targetEmail = document.getElementById('testEmail').value || user.email;
+                
+                log(`🔬 App Flow: Using ${targetEmail}...`);
+                
+                // Use our exact resend logic
+                const { data, error } = await supabase.auth.resend({
+                    type: 'signup',
+                    email: targetEmail,
+                    options: {
+                        emailRedirectTo: `${window.location.origin}/verify-email`
+                    }
+                });
+
+                log(`🔬 App Flow Result: ${JSON.stringify({ data, error }, null, 2)}`);
+                
+                if (error) {
+                    log(`❌ App Flow failed: ${error.message}`, 'error');
+                    document.getElementById('appTestResult').innerHTML = 
+                        '<div class="error">❌ App Flow Failed</div>';
+                } else {
+                    log('✅ App Flow successful', 'success');
+                    document.getElementById('appTestResult').innerHTML = 
+                        '<div class="success">✅ App Flow Success</div>';
+                }
+
+            } catch (error) {
+                log(`💥 App Flow exception: ${error.message}`, 'error');
+                document.getElementById('appTestResult').innerHTML = 
+                    '<div class="error">💥 App Flow Exception</div>';
+            }
+        }
+
+        async function runDirectAPITest() {
+            log('🎯 Testing Direct API (bypass our wrapper)...');
+            await testDirectSupabaseCall();
+        }
+
+        // Auto-initialize
+        window.onload = function() {
+            log('🚀 Advanced Magic Link Diagnostics loaded');
+            initializeTest();
+            
+            // Set default email if available
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email');
+            if (email) {
+                document.getElementById('testEmail').value = email;
+                log(`📧 Pre-filled email: ${email}`);
+            }
+        };
+    </script>
+</body>
+</html>

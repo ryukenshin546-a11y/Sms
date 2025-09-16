@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Link Testing Tool</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 15px; margin: 5px; border: none; border-radius: 3px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 11px; }
+        textarea, input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 3px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .log-entry { margin: 3px 0; padding: 8px; border-radius: 3px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Magic Link Testing Tool</h1>
+        
+        <div class="section warning">
+            <h3>⚠️ ปัญหาที่พบ:</h3>
+            <p>Magic link URL จบด้วย <code>#</code> โดยไม่มี token หรือ error parameters</p>
+            <p><strong>URL ที่ได้รับ:</strong> <code>http://localhost:2020/verify-email#</code></p>
+        </div>
+
+        <div class="grid">
+            <div>
+                <div class="section">
+                    <h3>🧪 Supabase Configuration Test</h3>
+                    <p><strong>URL:</strong> <span id="supabaseUrl">Loading...</span></p>
+                    <p><strong>Key:</strong> <span id="supabaseKey">Loading...</span></p>
+                    <button class="btn-primary" onclick="testSupabaseConnection()">🔗 Test Connection</button>
+                    <div id="connectionResult"></div>
+                </div>
+
+                <div class="section">
+                    <h3>📧 Send Magic Link Test</h3>
+                    <label>Test Email:</label>
+                    <input type="email" id="testEmail" placeholder="your-email@example.com" value="">
+                    <button class="btn-primary" onclick="sendMagicLink()">📨 Send Magic Link</button>
+                    <div id="magicLinkResult"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="section">
+                    <h3>🔍 Current URL Analysis</h3>
+                    <div id="urlAnalysis">
+                        <p><strong>Full URL:</strong> <span id="fullUrl"></span></p>
+                        <p><strong>Hash:</strong> <span id="hashContent"></span></p>
+                        <p><strong>Search:</strong> <span id="searchContent"></span></p>
+                    </div>
+                    <button class="btn-secondary" onclick="analyzeCurrentUrl()">🔍 Refresh Analysis</button>
+                </div>
+
+                <div class="section">
+                    <h3>🧪 URL Parameter Test</h3>
+                    <label>Test URL:</label>
+                    <textarea id="testUrl" rows="3" placeholder="Paste magic link URL here..."></textarea>
+                    <button class="btn-secondary" onclick="parseTestUrl()">📝 Parse URL</button>
+                    <div id="parseResult"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📝 Test Log</h3>
+            <button class="btn-danger" onclick="clearLog()">🗑️ Clear Log</button>
+            <div id="testLog" style="max-height: 400px; overflow-y: auto;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase configuration
+        const SUPABASE_URL = 'https://mnhdueclyzwtfkmwttkc.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uaGR1ZWNseXp3dGZrbXd0dGtjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYzNjQzOTYsImV4cCI6MjA0MTk0MDM5Nn0.YhFKaLAqR9-KHb6I-klYhTaB8cZOTJ4C7Ot28G7dN8Y';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('testLog');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+            
+            const entry = document.createElement('div');
+            entry.className = `log-entry section ${className}`;
+            entry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        function clearLog() {
+            document.getElementById('testLog').innerHTML = '';
+        }
+
+        async function testSupabaseConnection() {
+            log('🔗 Testing Supabase connection...');
+            
+            try {
+                const { data, error } = await supabase.auth.getUser();
+                
+                if (error && error.message !== 'Invalid JWT') {
+                    log(`❌ Connection error: ${error.message}`, 'error');
+                    document.getElementById('connectionResult').innerHTML = 
+                        `<div class="error">❌ Connection failed: ${error.message}</div>`;
+                } else {
+                    log('✅ Supabase connection successful', 'success');
+                    document.getElementById('connectionResult').innerHTML = 
+                        '<div class="success">✅ Connection successful</div>';
+                }
+            } catch (error) {
+                log(`❌ Connection test failed: ${error.message}`, 'error');
+                document.getElementById('connectionResult').innerHTML = 
+                    `<div class="error">❌ Test failed: ${error.message}</div>`;
+            }
+        }
+
+        async function sendMagicLink() {
+            const email = document.getElementById('testEmail').value;
+            if (!email) {
+                log('❌ Please enter an email address', 'error');
+                return;
+            }
+
+            log(`📨 Sending magic link to: ${email}`);
+            
+            const redirectTo = `${window.location.origin}/verify-email`;
+            log(`🔗 Redirect URL: ${redirectTo}`);
+
+            try {
+                const { data, error } = await supabase.auth.signInWithOtp({
+                    email: email,
+                    options: {
+                        emailRedirectTo: redirectTo,
+                        shouldCreateUser: false,
+                        data: {
+                            verification_type: 'magic_link'
+                        }
+                    }
+                });
+
+                if (error) {
+                    log(`❌ Magic link error: ${error.message}`, 'error');
+                    document.getElementById('magicLinkResult').innerHTML = 
+                        `<div class="error">❌ Error: ${error.message}</div>`;
+                } else {
+                    log('✅ Magic link sent successfully', 'success');
+                    log(`📊 Response data: ${JSON.stringify(data)}`, 'info');
+                    document.getElementById('magicLinkResult').innerHTML = 
+                        '<div class="success">✅ Magic link sent! Check your email.</div>';
+                }
+            } catch (error) {
+                log(`❌ Send failed: ${error.message}`, 'error');
+                document.getElementById('magicLinkResult').innerHTML = 
+                    `<div class="error">❌ Failed: ${error.message}</div>`;
+            }
+        }
+
+        function analyzeCurrentUrl() {
+            const fullUrl = window.location.href;
+            const hash = window.location.hash;
+            const search = window.location.search;
+            
+            document.getElementById('fullUrl').textContent = fullUrl;
+            document.getElementById('hashContent').textContent = hash || '(empty)';
+            document.getElementById('searchContent').textContent = search || '(empty)';
+            
+            log(`🔍 Current URL analyzed: ${fullUrl}`);
+        }
+
+        function parseTestUrl() {
+            const url = document.getElementById('testUrl').value;
+            if (!url) {
+                log('❌ Please enter a URL to test', 'error');
+                return;
+            }
+
+            try {
+                const urlObj = new URL(url);
+                const queryParams = Object.fromEntries(urlObj.searchParams.entries());
+                
+                // Parse fragments
+                const hash = urlObj.hash.substring(1);
+                const fragmentParams = hash ? Object.fromEntries(new URLSearchParams(hash).entries()) : {};
+                
+                let html = '<div class="info" style="margin-top: 10px;">';
+                html += '<h4>📊 URL Analysis Results:</h4>';
+                html += `<p><strong>Base:</strong> ${urlObj.origin}${urlObj.pathname}</p>`;
+                html += `<p><strong>Hash:</strong> ${urlObj.hash || '(empty)'}</p>`;
+                html += `<p><strong>Search:</strong> ${urlObj.search || '(empty)'}</p>`;
+                
+                if (Object.keys(queryParams).length > 0) {
+                    html += '<p><strong>Query Parameters:</strong></p>';
+                    html += `<pre>${JSON.stringify(queryParams, null, 2)}</pre>`;
+                }
+                
+                if (Object.keys(fragmentParams).length > 0) {
+                    html += '<p><strong>Fragment Parameters:</strong></p>';
+                    html += `<pre>${JSON.stringify(fragmentParams, null, 2)}</pre>`;
+                    
+                    if (fragmentParams.error) {
+                        html += `<p style="color: red;"><strong>🚨 Error Found:</strong> ${fragmentParams.error}</p>`;
+                        if (fragmentParams.error_description) {
+                            html += `<p style="color: red;"><strong>Description:</strong> ${decodeURIComponent(fragmentParams.error_description)}</p>`;
+                        }
+                    }
+                    
+                    if (fragmentParams.token_hash || fragmentParams.token) {
+                        html += '<p style="color: green;"><strong>✅ Token Found</strong></p>';
+                    }
+                } else if (!Object.keys(queryParams).length) {
+                    html += '<p style="color: orange;"><strong>⚠️ No parameters found</strong></p>';
+                }
+                
+                html += '</div>';
+                document.getElementById('parseResult').innerHTML = html;
+                
+                log('✅ URL parsed successfully', 'success');
+                
+            } catch (error) {
+                log(`❌ URL parsing error: ${error.message}`, 'error');
+                document.getElementById('parseResult').innerHTML = 
+                    `<div class="error">❌ Invalid URL: ${error.message}</div>`;
+            }
+        }
+
+        // Initialize page
+        window.onload = function() {
+            document.getElementById('supabaseUrl').textContent = SUPABASE_URL;
+            document.getElementById('supabaseKey').textContent = SUPABASE_ANON_KEY.substring(0, 20) + '...';
+            
+            analyzeCurrentUrl();
+            log('🚀 Magic Link Testing Tool initialized');
+            
+            // Auto-populate email if available
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email');
+            if (email) {
+                document.getElementById('testEmail').value = email;
+            }
+        };
+
+        // Listen for URL changes
+        window.addEventListener('hashchange', function() {
+            analyzeCurrentUrl();
+            log('🔄 URL hash changed, re-analyzing...');
+        });
+    </script>
+</body>
+</html>

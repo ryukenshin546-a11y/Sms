@@ -1,14 +1,13 @@
-// Optimized Node.js Script สำหรับรัน Auto-Bot ด้วย Performance Improvements
-// ใช้ FLOW และ SELECTOR เดียวกันกับ Original แต่เพิ่มความเร็ว
-// รันคำสั่ง: node scripts/runAutoBotOptimized.js
+// 🚀 Optimized Node.js Script สำหรับรัน Auto-Bot ด้วย Performance Improvements
+// ✅ ระบบหลักที่ใช้งานจริง - เร็วกว่าและครบฟีเจอร์
+// รันคำสั่ง: node scripts/runAutoBot.js
 
 import puppeteer from 'puppeteer';
 
-const botConfig = {
-  headless: false, // เหมือน original
-  timeout: 20000, // ✅ ลดจาก 30000ms เป็น 20000ms (เร็วขึ้น 33%)
-  baseUrl: 'https://web.smsup-plus.com'
-};
+// ✨ Parse command line arguments สำหรับรับข้อมูลจริงของผู้ใช้
+const args = process.argv.slice(2);
+const useRealData = args.includes('--use-real-data');
+let realUserData = null;
 
 // ✅ ใช้ password generation เดียวกันกับ original
 const generateSecurePassword = () => {
@@ -36,14 +35,78 @@ const generateSecurePassword = () => {
   return password.split('').sort(() => Math.random() - 0.5).join('');
 };
 
-// ✅ ใช้ test data structure เดียวกันกับ original
-const testUserData = {
-  get accountName() { return this._username; },
-  get username() { return this._username; },
-  _username: 'test' + Math.floor(Math.random() * 1000),
-  email: 'test' + Math.floor(Math.random() * 1000) + '@gmail.com',
-  password: generateSecurePassword(),
-  get confirmPassword() { return this.password; },
+// ✅ แทนที่ password ถ้าจำเป็น (หลังจาก function declaration)
+if (useRealData && realUserData && realUserData.password === 'auto-generate') {
+  realUserData.password = generateSecurePassword();
+  console.log('🔐 สร้าง password ใหม่สำหรับผู้ใช้');
+}
+
+// ✅ Configuration object สำหรับ performance
+const config = {
+  timeout: 20000, // ✅ ลดจาก 30000ms เป็น 20000ms (เร็วขึ้น 33%)
+  baseUrl: 'https://web.smsup-plus.com'
+};
+
+if (useRealData) {
+  console.log('🔄 โหมด: ใช้ข้อมูลจริงของผู้ใช้');
+  
+  // Parse arguments
+  const usernameIndex = args.indexOf('--username');
+  console.log('🔄 โหมด: ใช้ข้อมูลจริงของผู้ใช้');
+  
+  // Parse arguments
+  const usernameIndex = args.indexOf('--username');
+  const emailIndex = args.indexOf('--email');
+  const passwordIndex = args.indexOf('--password');
+  
+  if (usernameIndex !== -1 && emailIndex !== -1) {
+    // ใช้ temporary variable และตรวจสอบ password หลังจาก function declaration
+    const passwordArg = passwordIndex !== -1 ? args[passwordIndex + 1] : 'auto-generate';
+    realUserData = {
+      username: args[usernameIndex + 1],
+      email: args[emailIndex + 1],
+      password: passwordArg // จะถูกแทนที่ด้วย generated password ในภายหลังหากจำเป็น
+    };
+    
+    console.log('📝 ข้อมูลจริงของผู้ใช้:', {
+      username: realUserData.username,
+      email: realUserData.email,
+      hasPassword: !!realUserData.password
+    });
+  }
+} else {
+  console.log('🎲 โหมด: ใช้ข้อมูลทดสอบแบบสุ่ม');
+}
+
+const botConfig = {
+  headless: false, // เหมือน original
+  timeout: 20000, // ✅ ลดจาก 30000ms เป็น 20000ms (เร็วขึ้น 33%)
+  baseUrl: 'https://web.smsup-plus.com'
+};
+
+// ✅ ใช้ test data structure เดียวกันกับ original หรือข้อมูลจริง
+const getUserData = () => {
+  if (useRealData && realUserData) {
+    // ใช้ข้อมูลจริงของผู้ใช้
+    return {
+      get accountName() { return this.username; },
+      username: realUserData.username,
+      email: realUserData.email,
+      password: realUserData.password,
+      get confirmPassword() { return this.password; }
+    };
+  } else {
+    // ใช้ test data แบบสุ่ม (เหมือนเดิม)
+    const testUserData = {
+      get accountName() { return this._username; },
+      get username() { return this._username; },
+      _username: 'test' + Math.floor(Math.random() * 1000),
+      email: 'test' + Math.floor(Math.random() * 1000) + '@gmail.com',
+      password: generateSecurePassword(),
+      get confirmPassword() { return this.password; }
+    };
+    return testUserData;
+  }
 };
 
 // ✅ ใช้ admin credentials เดียวกันกับ original
@@ -165,11 +228,14 @@ async function runAutoBot() {
     console.log('🤖 รอฟอร์มปรากฏและกรอกข้อมูล...');
     await page.waitForSelector('input[placeholder="Account name"]', { timeout: botConfig.timeout });
     
+    // ดึงข้อมูลผู้ใช้ (จริงหรือทดสอบ)
+    const userData = getUserData();
+    
     console.log(`🤖 กรอกข้อมูลตามที่กำหนด:`);
-    console.log(`   - Account Name: ${testUserData.accountName}`);
-    console.log(`   - Username: ${testUserData.username}`);
-    console.log(`   - Email: ${testUserData.email}`);
-    console.log(`   - Password: ${testUserData.password}`);
+    console.log(`   - Account Name: ${userData.accountName}`);
+    console.log(`   - Username: ${userData.username}`);
+    console.log(`   - Email: ${userData.email}`);
+    console.log(`   - Password: ${userData.password}`);
     
     // ✅ รอให้ฟอร์มโหลดเสร็จ - เหมือน original แต่ลดเวลา
     await new Promise(resolve => setTimeout(resolve, 1000)); // ✅ ลดจาก 2000ms เหลือ 1000ms
@@ -188,8 +254,8 @@ async function runAutoBot() {
       await page.waitForSelector(accountNameSelector);
       await page.focus(accountNameSelector);
       await page.click(accountNameSelector, { clickCount: 3 });
-      await page.type(accountNameSelector, testUserData.accountName, { delay: 10 }); // ✅ เร็วขึ้น
-      console.log('✅ กรอก Account Name:', testUserData.accountName);
+      await page.type(accountNameSelector, userData.accountName, { delay: 10 }); // ✅ เร็วขึ้น
+      console.log('✅ กรอก Account Name:', userData.accountName);
     } catch (error) {
       console.error('❌ กรอก Account Name ล้มเหลว:', error.message);
     }
@@ -199,8 +265,8 @@ async function runAutoBot() {
       await page.waitForSelector(usernameSelector);
       await page.focus(usernameSelector);
       await page.click(usernameSelector, { clickCount: 3 });
-      await page.type(usernameSelector, testUserData.username, { delay: 10 }); // ✅ เร็วขึ้น
-      console.log('✅ กรอก Username:', testUserData.username);
+      await page.type(usernameSelector, userData.username, { delay: 10 }); // ✅ เร็วขึ้น
+      console.log('✅ กรอก Username:', userData.username);
     } catch (error) {
       console.error('❌ กรอก Username ล้มเหลว:', error.message);
     }
@@ -210,8 +276,8 @@ async function runAutoBot() {
       await page.waitForSelector(emailSelector);
       await page.focus(emailSelector);
       await page.click(emailSelector, { clickCount: 3 });
-      await page.type(emailSelector, testUserData.email, { delay: 10 }); // ✅ เร็วขึ้น
-      console.log('✅ กรอก Email:', testUserData.email);
+      await page.type(emailSelector, userData.email, { delay: 10 }); // ✅ เร็วขึ้น
+      console.log('✅ กรอก Email:', userData.email);
     } catch (error) {
       console.error('❌ กรอก Email ล้มเหลว:', error.message);
     }
@@ -221,8 +287,8 @@ async function runAutoBot() {
       await page.waitForSelector(passwordSelector);
       await page.focus(passwordSelector);
       await page.click(passwordSelector, { clickCount: 3 });
-      await page.type(passwordSelector, testUserData.password, { delay: 10 }); // ✅ เร็วขึ้น
-      console.log('✅ กรอก Password:', testUserData.password);
+      await page.type(passwordSelector, userData.password, { delay: 10 }); // ✅ เร็วขึ้น
+      console.log('✅ กรอก Password:', userData.password);
     } catch (error) {
       console.error('❌ กรอก Password ล้มเหลว:', error.message);
     }
@@ -232,8 +298,8 @@ async function runAutoBot() {
       await page.waitForSelector(confirmPasswordSelector);
       await page.focus(confirmPasswordSelector);
       await page.click(confirmPasswordSelector, { clickCount: 3 });
-      await page.type(confirmPasswordSelector, testUserData.password, { delay: 10 }); // ✅ เร็วขึ้น
-      console.log('✅ กรอก Confirm Password:', testUserData.password);
+      await page.type(confirmPasswordSelector, userData.password, { delay: 10 }); // ✅ เร็วขึ้น
+      console.log('✅ กรอก Confirm Password:', userData.password);
     } catch (error) {
       console.error('❌ กรอก Confirm Password ล้มเหลว:', error.message);
     }
@@ -423,10 +489,10 @@ async function runAutoBot() {
     
     console.log('✅ Auto-Bot เสร็จสิ้น! สร้าง Sub Account สำเร็จ');
     console.log('📋 ข้อมูล Sub Account ที่สร้าง:');
-    console.log(`   Account Name: ${testUserData.accountName}`);
-    console.log(`   Username: ${testUserData.username}`);
-    console.log(`   Email: ${testUserData.email}`);
-    console.log(`   Password: ${testUserData.password}`);
+    console.log(`   Account Name: ${userData.accountName}`);
+    console.log(`   Username: ${userData.username}`);
+    console.log(`   Email: ${userData.email}`);
+    console.log(`   Password: ${userData.password}`);
     
     // รอสักครู่ให้ดูผลลัพธ์
     await new Promise(resolve => setTimeout(resolve, 1500)); // ✅ ลดจาก 3000ms เหลือ 1500ms
@@ -461,7 +527,7 @@ async function runAutoBot() {
     await new Promise(resolve => setTimeout(resolve, 2000)); // ✅ ลดจาก 3000ms เหลือ 2000ms
     
     // 14. เลือก Account Name ที่สร้างไว้
-    console.log(`🤖 เลือก Account Name: ${testUserData.accountName}...`);
+    console.log(`🤖 เลือก Account Name: ${userData.accountName}...`);
     try {
       await page.waitForSelector('div.ant-select-selection__placeholder', { timeout: 10000 });
       
@@ -470,8 +536,8 @@ async function runAutoBot() {
       
       await new Promise(resolve => setTimeout(resolve, 500)); // ✅ ลดจาก 1000ms เหลือ 500ms
       
-      await page.keyboard.type(testUserData.accountName, { delay: 20 }); // ✅ เพิ่มความเร็ว
-      console.log(`✅ พิมพ์ Account Name: ${testUserData.accountName}`);
+      await page.keyboard.type(userData.accountName, { delay: 20 }); // ✅ เพิ่มความเร็ว
+      console.log(`✅ พิมพ์ Account Name: ${userData.accountName}`);
       
       await new Promise(resolve => setTimeout(resolve, 800)); // ✅ ลดจาก 1500ms เหลือ 800ms
       
@@ -486,7 +552,7 @@ async function runAutoBot() {
         } else {
           throw new Error(`Account ${accountName} not found in dropdown`);
         }
-      }, testUserData.accountName);
+      }, userData.accountName);
       
     } catch (error) {
       console.log('⚠️ ลองเลือก Account ด้วย Enter...');
@@ -629,9 +695,9 @@ async function runAutoBot() {
     
     console.log('🎉 เพิ่ม Credits สำเร็จ!');
     console.log('📋 สรุปการดำเนินการ:');
-    console.log(`   ✅ สร้าง Sub Account: ${testUserData.accountName}`);
+    console.log(`   ✅ สร้าง Sub Account: ${userData.accountName}`);
     console.log(`   ✅ เพิ่ม Credits: 10 หน่วย`);
-    console.log(`   ✅ Account ที่ได้รับ Credits: ${testUserData.accountName}`);
+    console.log(`   ✅ Account ที่ได้รับ Credits: ${userData.accountName}`);
     
     // รอสักครู่ให้ดูผลลัพธ์สุดท้าย
     await new Promise(resolve => setTimeout(resolve, 1500)); // ✅ ลดจาก 3000ms เหลือ 1500ms

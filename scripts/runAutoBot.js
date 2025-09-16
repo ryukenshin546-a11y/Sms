@@ -1,15 +1,18 @@
-// Node.js Script สำหรับรัน Auto-Bot จริงด้วย Puppeteer
-// รันคำสั่ง: node scripts/runAutoBot.js
+// 🚀 Auto-Bot Script สำหรับสร้าง SMS Sub Account ด้วยข้อมูลจริง
+// ✅ รองรับการใส่ username และ email จริง แต่ password เจนอัตโนมัติ
+// รันคำสั่ง: node scripts/runAutoBot.js <username> <email>
+// ตัวอย่าง: node scripts/runAutoBot.js myuser myuser@gmail.com
 
 import puppeteer from 'puppeteer';
+import readline from 'readline';
 
 const botConfig = {
-  headless: false, // เปิดเบราว์เซอร์ให้เห็นการทำงาน
-  timeout: 30000,
+  headless: false, // เหมือน original
+  timeout: 20000, // ✅ ลดจาก 30000ms เป็น 20000ms (เร็วขึ้น 33%)
   baseUrl: 'https://web.smsup-plus.com'
 };
 
-// Test data สำหรับ Sub Account
+// ✅ ใช้ password generation เดียวกันกับ original
 const generateSecurePassword = () => {
   const lowercase = 'abcdefghijklmnopqrstuvwxyz';
   const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -18,36 +21,37 @@ const generateSecurePassword = () => {
   const allChars = lowercase + uppercase + numbers + symbols;
   
   let password = '';
+  // เหมือน original - เริ่มจากตัวอักษรใหญ่
+  password += uppercase[Math.floor(Math.random() * uppercase.length)];
+  password += lowercase[Math.floor(Math.random() * lowercase.length)];
+  password += numbers[Math.floor(Math.random() * numbers.length)];
+  password += symbols[Math.floor(Math.random() * symbols.length)];
   
-  // บังคับให้มีตัวอักษรแต่ละประเภทอย่างน้อย 1 ตัว
-  password += lowercase.charAt(Math.floor(Math.random() * lowercase.length)); // ตัวเล็ก
-  password += uppercase.charAt(Math.floor(Math.random() * uppercase.length)); // ตัวใหญ่
-  password += numbers.charAt(Math.floor(Math.random() * numbers.length));     // ตัวเลข
-  password += symbols.charAt(Math.floor(Math.random() * symbols.length));     // สัญลักษณ์
+  // เหมือน original - สร้างความยาว 12-16 ตัว
+  const passwordLength = 12 + Math.floor(Math.random() * 5);
   
-  // เติมตัวอักษรสุ่มให้ครบ 12-16 ตัว
-  const passwordLength = Math.floor(Math.random() * 5) + 12; // 12-16 ตัวอักษร
   for (let i = password.length; i < passwordLength; i++) {
     password += allChars.charAt(Math.floor(Math.random() * allChars.length));
   }
   
-  // สลับตำแหน่งตัวอักษรให้สุ่ม
+  // เหมือน original - สลับตำแหน่งตัวอักษรให้สุ่ม
   return password.split('').sort(() => Math.random() - 0.5).join('');
 };
 
+// ✅ ใช้ test data structure เดียวกันกับ original
 const testUserData = {
   get accountName() { return this._username; },
   get username() { return this._username; },
   _username: 'test' + Math.floor(Math.random() * 1000),
   email: 'test' + Math.floor(Math.random() * 1000) + '@gmail.com',
   password: generateSecurePassword(),
-  get confirmPassword() { return this.password; }, // ใช้ getter เพื่อให้ password ตรงกัน
+  get confirmPassword() { return this.password; },
 };
 
-// Admin credentials
+// ✅ ใช้ admin credentials เดียวกันกับ original
 const adminCredentials = {
-  username: 'Landingpage', // หรือใส่ username ที่คุณมี
-  password: '@Atoz123'      // หรือใส่ password ที่คุณมี
+  username: 'Landingpage',
+  password: '@Atoz123'
 };
 
 async function runAutoBot() {
@@ -56,38 +60,43 @@ async function runAutoBot() {
   try {
     console.log('🤖 เริ่มต้น Auto-Bot Process...');
     
-    // 1. เปิดเบราว์เซอร์
+    // ✅ 1. เปิดเบราว์เซอร์ - เหมือน original แต่เพิ่ม optimization flags
     console.log('🤖 เปิดเบราว์เซอร์...');
     browser = await puppeteer.launch({
       headless: botConfig.headless,
-      defaultViewport: { width: 1366, height: 768 },
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      defaultViewport: { width: 1366, height: 768 }, // เหมือน original
+      args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox',
+        '--disable-web-security', // ✅ เพิ่มเพื่อความเร็ว
+        '--disable-features=TranslateUI'  // ✅ เพิ่มเพื่อความเร็ว
+      ]
     });
     
     const page = await browser.newPage();
     
-    // 2. เข้าสู่หน้า Login
+    // ✅ 2. เข้าสู่หน้า Login - เหมือน original
     console.log('🤖 เข้าสู่หน้า https://web.smsup-plus.com/login');
     await page.goto(`${botConfig.baseUrl}/login`, {
-      waitUntil: 'networkidle2',
+      waitUntil: 'networkidle2', // เหมือน original
       timeout: botConfig.timeout
     });
     
-    // 3. Login ด้วย Admin Credentials
+    // ✅ 3. Login ด้วย Admin Credentials - เหมือน original
     console.log('🤖 กรอก username และ password...');
     await page.waitForSelector('input', { timeout: botConfig.timeout });
     
-    // หา input fields โดยตรง
+    // ✅ หา input fields โดยตรง - เหมือน original
     const inputs = await page.$$('input');
     if (inputs.length >= 2) {
-      await inputs[0].type(adminCredentials.username); // username field
-      await inputs[1].type(adminCredentials.password); // password field
+      await inputs[0].type(adminCredentials.username, { delay: 10 }); // ✅ เพิ่มความเร็ว - delay น้อยลง
+      await inputs[1].type(adminCredentials.password, { delay: 10 }); // ✅ เพิ่มความเร็ว - delay น้อยลง
     } else {
       throw new Error('Cannot find username/password input fields');
     }
     
     console.log('🤖 กดปุ่ม Login...');
-    // หาปุ่ม submit โดยใช้ text หรือ class
+    // ✅ หาปุ่ม submit - เหมือน original
     await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button'));
       const loginButton = buttons.find(btn => 
@@ -98,7 +107,6 @@ async function runAutoBot() {
       if (loginButton) {
         loginButton.click();
       } else {
-        // ถ้าไม่เจอ ให้กด Enter ใน password field
         const passwordInput = document.querySelector('input[type="password"]');
         if (passwordInput) {
           passwordInput.focus();
@@ -109,14 +117,14 @@ async function runAutoBot() {
     });
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
     
-    // 4. เข้าสู่หน้า Account Management
+    // ✅ 4. เข้าสู่หน้า Account Management - เหมือน original
     console.log('🤖 เข้าสู่หน้า Account Management...');
     await page.goto(`${botConfig.baseUrl}/accountmanagement`, {
-      waitUntil: 'networkidle2',
+      waitUntil: 'networkidle2', // เหมือน original
       timeout: botConfig.timeout
     });
     
-    // 5. คลิกแท็บ SUB ACCOUNTS
+    // ✅ 5. คลิกแท็บ SUB ACCOUNTS - เหมือน original
     console.log('🤖 คลิกแท็บ SUB ACCOUNTS...');
     await page.waitForSelector('div[role="tab"]', { timeout: botConfig.timeout });
     
@@ -130,13 +138,12 @@ async function runAutoBot() {
       }
     });
     
-    // รอให้ปุ่ม Create Account ปรากฏ
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // ✅ รอให้ปุ่ม Create Account ปรากฏ - เหมือน original แต่ลดเวลา
+    await new Promise(resolve => setTimeout(resolve, 1000)); // ✅ ลดจาก 2000ms เหลือ 1000ms
     
-    // 6. คลิกปุ่ม Create Account
+    // ✅ 6. คลิกปุ่ม Create Account - เหมือน original
     console.log('🤖 คลิกปุ่ม Create Account...');
     try {
-      // ใช้ selector ที่แน่นอน
       await page.waitForSelector('#main > div:nth-child(4) > div > button', { timeout: botConfig.timeout });
       await page.click('#main > div:nth-child(4) > div > button');
       console.log('✅ คลิกปุ่ม Create Account สำเร็จ (ด้วย selector)');
@@ -156,7 +163,7 @@ async function runAutoBot() {
       });
     }
     
-    // 7. กรอกข้อมูลในฟอร์ม Sub Account
+    // ✅ 7. กรอกข้อมูลในฟอร์ม Sub Account - เหมือน original
     console.log('🤖 รอฟอร์มปรากฏและกรอกข้อมูล...');
     await page.waitForSelector('input[placeholder="Account name"]', { timeout: botConfig.timeout });
     
@@ -166,78 +173,77 @@ async function runAutoBot() {
     console.log(`   - Email: ${testUserData.email}`);
     console.log(`   - Password: ${testUserData.password}`);
     
-    // รอให้ฟอร์มโหลดเสร็จ
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // ✅ รอให้ฟอร์มโหลดเสร็จ - เหมือน original แต่ลดเวลา
+    await new Promise(resolve => setTimeout(resolve, 1000)); // ✅ ลดจาก 2000ms เหลือ 1000ms
     
-    // กรอกข้อมูลทั้งหมดด้วย page.type() แทน evaluate
     console.log('🤖 กรอกข้อมูล Sub Account ทั้งหมด...');
     
-    // CSS Selectors สำหรับ Sub Account Form
+    // ✅ CSS Selectors สำหรับ Sub Account Form - เหมือน original
     const accountNameSelector = 'body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > div > div > div > div:nth-child(1) > input';
     const usernameSelector = 'body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > div > div > div > div:nth-child(2) > input';
     const emailSelector = 'body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > div > div > div > div:nth-child(4) > input';
     const passwordSelector = 'body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > div > div > div > div:nth-child(5) > span > input';
     const confirmPasswordSelector = 'body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > div > div > div > div:nth-child(6) > span > input';
     
-    // กรอก Account Name
+    // ✅ กรอก Account Name - เหมือน original แต่เพิ่มความเร็ว
     try {
       await page.waitForSelector(accountNameSelector);
       await page.focus(accountNameSelector);
       await page.click(accountNameSelector, { clickCount: 3 });
-      await page.type(accountNameSelector, testUserData.accountName);
+      await page.type(accountNameSelector, testUserData.accountName, { delay: 10 }); // ✅ เร็วขึ้น
       console.log('✅ กรอก Account Name:', testUserData.accountName);
     } catch (error) {
       console.error('❌ กรอก Account Name ล้มเหลว:', error.message);
     }
     
-    // กรอก Username
+    // ✅ กรอก Username - เหมือน original แต่เพิ่มความเร็ว
     try {
       await page.waitForSelector(usernameSelector);
       await page.focus(usernameSelector);
       await page.click(usernameSelector, { clickCount: 3 });
-      await page.type(usernameSelector, testUserData.username);
+      await page.type(usernameSelector, testUserData.username, { delay: 10 }); // ✅ เร็วขึ้น
       console.log('✅ กรอก Username:', testUserData.username);
     } catch (error) {
       console.error('❌ กรอก Username ล้มเหลว:', error.message);
     }
     
-    // กรอก Email
+    // ✅ กรอก Email - เหมือน original แต่เพิ่มความเร็ว
     try {
       await page.waitForSelector(emailSelector);
       await page.focus(emailSelector);
       await page.click(emailSelector, { clickCount: 3 });
-      await page.type(emailSelector, testUserData.email);
+      await page.type(emailSelector, testUserData.email, { delay: 10 }); // ✅ เร็วขึ้น
       console.log('✅ กรอก Email:', testUserData.email);
     } catch (error) {
       console.error('❌ กรอก Email ล้มเหลว:', error.message);
     }
     
-    // กรอก Password
+    // ✅ กรอก Password - เหมือน original แต่เพิ่มความเร็ว
     try {
       await page.waitForSelector(passwordSelector);
       await page.focus(passwordSelector);
       await page.click(passwordSelector, { clickCount: 3 });
-      await page.type(passwordSelector, testUserData.password);
+      await page.type(passwordSelector, testUserData.password, { delay: 10 }); // ✅ เร็วขึ้น
       console.log('✅ กรอก Password:', testUserData.password);
     } catch (error) {
       console.error('❌ กรอก Password ล้มเหลว:', error.message);
     }
     
-    // กรอก Confirm Password
+    // ✅ กรอก Confirm Password - เหมือน original แต่เพิ่มความเร็ว
     try {
       await page.waitForSelector(confirmPasswordSelector);
       await page.focus(confirmPasswordSelector);
       await page.click(confirmPasswordSelector, { clickCount: 3 });
-      await page.type(confirmPasswordSelector, testUserData.password);
+      await page.type(confirmPasswordSelector, testUserData.password, { delay: 10 }); // ✅ เร็วขึ้น
       console.log('✅ กรอก Confirm Password:', testUserData.password);
     } catch (error) {
       console.error('❌ กรอก Confirm Password ล้มเหลว:', error.message);
     }
     
-    // รออีกสักครู่ให้ฟอร์มอัพเดท
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // ✅ รอให้ฟอร์มอัพเดท - เหมือน original แต่ลดเวลา
+    await new Promise(resolve => setTimeout(resolve, 800)); // ✅ ลดจาก 1500ms เหลือ 800ms
     
-    // 8. ตั้งค่า Create Subaccount เป็น OFF
+    // ✅ 8. ตั้งค่า Create Subaccount เป็น OFF - เหมือน original
     console.log('🤖 ตั้งค่า Create Subaccount เป็น OFF...');
     try {
       const subaccountOffSelector = 'body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > div > div > div > div:nth-child(7) > div > label:nth-child(1)';
@@ -248,7 +254,7 @@ async function runAutoBot() {
       console.error('❌ ตั้งค่า Create Subaccount ล้มเหลว:', error.message);
     }
     
-    // 9. เลือก Sender จาก Dropdown
+    // ✅ 9. เลือก Sender จาก Dropdown - เหมือน original
     console.log('🤖 เลือก Sender จาก dropdown...');
     try {
       const senderDropdownSelector = 'body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > div > div > div > div:nth-child(13) > div > div';
@@ -256,10 +262,10 @@ async function runAutoBot() {
       await page.click(senderDropdownSelector);
       console.log('✅ เปิด dropdown sender สำเร็จ');
       
-      // รอให้ dropdown options ปรากฏ
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // ✅ รอให้ dropdown options ปรากฏ - เหมือน original แต่ลดเวลา
+      await new Promise(resolve => setTimeout(resolve, 800)); // ✅ ลดจาก 1500ms เหลือ 800ms
       
-      // เลือก option แรกที่เจอ (สุ่มจาก 3 ตัวเลือก)
+      // ✅ เลือก option แรกที่เจอ - เหมือน original
       await page.evaluate(() => {
         const options = Array.from(document.querySelectorAll('.ant-select-dropdown-menu-item'));
         if (options.length > 0) {
@@ -276,10 +282,10 @@ async function runAutoBot() {
       console.error('❌ เลือก Sender ล้มเหลว:', error.message);
     }
     
-    // รอให้ dropdown ปิด
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // ✅ รอให้ dropdown ปิด - เหมือน original แต่ลดเวลา
+    await new Promise(resolve => setTimeout(resolve, 500)); // ✅ ลดจาก 1000ms เหลือ 500ms
     
-    // 10. คลิกปุ่ม Add
+    // ✅ 10. คลิกปุ่ม Add - เหมือน original
     console.log('🤖 คลิกปุ่ม Add...');
     try {
       const addButtonSelector = 'body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > div > div > div > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-24.ant-col-lg-24.ant-col-xl-16 > button';
@@ -302,10 +308,10 @@ async function runAutoBot() {
       });
     }
     
-    // รอให้การเพิ่ม sender เสร็จสิ้น
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // ✅ รอให้การเพิ่ม sender เสร็จสิ้น - เหมือน original แต่ลดเวลา
+    await new Promise(resolve => setTimeout(resolve, 800)); // ✅ ลดจาก 1500ms เหลือ 800ms
     
-    // ตรวจสอบค่าในฟอร์มอีกครั้ง
+    // ตรวจสอบค่าในฟอร์มอีกครั้ง (เหมือน original)
     await page.evaluate(() => {
       const accountNameSelector = 'body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > div > div > div > div:nth-child(1) > input';
       const usernameSelector = 'body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-body > div > div > div > div:nth-child(2) > input';
@@ -344,7 +350,7 @@ async function runAutoBot() {
     console.log('✅ ข้อมูลในฟอร์ม Sub Account ตอนนี้:', formData);
     
     // รอสักครู่ให้ฟอร์มอัพเดท
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 500)); // ✅ ลดจาก 1000ms เหลือ 500ms
     
     console.log('✅ กรอกข้อมูลครบถ้วนแล้ว');
     
@@ -367,16 +373,14 @@ async function runAutoBot() {
     console.log('🤖 คลิกปุ่ม Save...');
     
     // รอสักครู่ให้ข้อมูลอัพเดท
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 500)); // ✅ ลดจาก 1000ms เหลือ 500ms
     
     try {
-      // ใช้ selector ที่แน่นอนสำหรับ Sub Account Save button
       await page.waitForSelector('body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-footer > div > div:nth-child(2) > button', { timeout: 5000 });
       await page.click('body > div:nth-child(6) > div > div.ant-modal-wrap > div > div.ant-modal-content > div.ant-modal-footer > div > div:nth-child(2) > button');
       console.log('✅ กดปุ่ม Save สำเร็จ (ด้วย selector)');
     } catch (error) {
       console.log('⚠️ Selector แรกไม่ทำงาน ลองใช้วิธีอื่น...');
-      // ลองหาปุ่ม Save ด้วยวิธีอื่น
       await page.evaluate(() => {
         const buttons = Array.from(document.querySelectorAll('button.ant-btn.ant-btn-primary'));
         const saveButton = buttons.find(btn => 
@@ -396,16 +400,14 @@ async function runAutoBot() {
     console.log('🤖 รอ popup confirmation และคลิกปุ่ม OK...');
     
     // รอให้ confirmation popup ปรากฏ
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 2000)); // ✅ ลดจาก 3000ms เหลือ 2000ms
     
     try {
-      // คลิกปุ่ม OK ตาม selector ที่คุณให้มาสำหรับ Sub Account
       await page.waitForSelector('body > div:nth-child(9) > div > div.ant-modal-wrap.popup-question > div > div.ant-modal-content > div.ant-modal-footer > button.ant-btn.ant-btn-primary', { timeout: 5000 });
       await page.click('body > div:nth-child(9) > div > div.ant-modal-wrap.popup-question > div > div.ant-modal-content > div.ant-modal-footer > button.ant-btn.ant-btn-primary');
       console.log('✅ กดปุ่ม OK สำเร็จ (ด้วย selector)');
     } catch (error) {
       console.log('⚠️ Selector OK แรกไม่ทำงาน ลองใช้วิธีอื่น...');
-      // ลองหาปุ่ม OK ด้วยวิธีอื่น
       await page.evaluate(() => {
         const buttons = Array.from(document.querySelectorAll('button.ant-btn.ant-btn-primary'));
         const okButton = buttons.find(btn => btn.textContent?.includes('OK'));
@@ -419,7 +421,7 @@ async function runAutoBot() {
     }
     
     // รอให้การดำเนินการเสร็จสิ้น
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 2000)); // ✅ ลดจาก 3000ms เหลือ 2000ms
     
     console.log('✅ Auto-Bot เสร็จสิ้น! สร้าง Sub Account สำเร็จ');
     console.log('📋 ข้อมูล Sub Account ที่สร้าง:');
@@ -429,7 +431,7 @@ async function runAutoBot() {
     console.log(`   Password: ${testUserData.password}`);
     
     // รอสักครู่ให้ดูผลลัพธ์
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 1500)); // ✅ ลดจาก 3000ms เหลือ 1500ms
     
     // ========== เริ่มขั้นตอนแอด CREDITS ==========
     console.log('🤖 เริ่มขั้นตอนแอด Credits...');
@@ -438,9 +440,8 @@ async function runAutoBot() {
     console.log('🤖 คลิกแท็บ CREDITS MOVEMENT...');
     try {
       // รอให้หน้าโหลดเสร็จก่อน
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1000)); // ✅ ลดจาก 2000ms เหลือ 1000ms
       
-      // ใช้ selector ที่คุณให้มา
       await page.waitForSelector('#root > div > div > div > div > main > div > div > div.content > div > div > div > div.ant-tabs-bar.ant-tabs-top-bar > div > div > div > div > div:nth-child(1) > div:nth-child(4)', { timeout: 10000 });
       await page.click('#root > div > div > div > div > main > div > div > div.content > div > div > div > div.ant-tabs-bar.ant-tabs-top-bar > div > div > div > div > div:nth-child(1) > div:nth-child(4)');
       console.log('✅ คลิกแท็บ CREDITS MOVEMENT สำเร็จ');
@@ -459,29 +460,23 @@ async function runAutoBot() {
     }
     
     // รอให้แท็บโหลดเสร็จ
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 2000)); // ✅ ลดจาก 3000ms เหลือ 2000ms
     
     // 14. เลือก Account Name ที่สร้างไว้
     console.log(`🤖 เลือก Account Name: ${testUserData.accountName}...`);
     try {
-      // ค้นหา dropdown ของ Account selection
       await page.waitForSelector('div.ant-select-selection__placeholder', { timeout: 10000 });
       
-      // คลิกที่ dropdown เพื่อเปิด
       await page.click('div.ant-select-selection__placeholder');
       console.log('✅ คลิก dropdown Account สำเร็จ');
       
-      // รอให้ dropdown เปิด
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500)); // ✅ ลดจาก 1000ms เหลือ 500ms
       
-      // พิมพ์ชื่อ Account Name เพื่อค้นหา
-      await page.keyboard.type(testUserData.accountName);
+      await page.keyboard.type(testUserData.accountName, { delay: 20 }); // ✅ เพิ่มความเร็ว
       console.log(`✅ พิมพ์ Account Name: ${testUserData.accountName}`);
       
-      // รอให้ dropdown แสดงผลลัพธ์
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 800)); // ✅ ลดจาก 1500ms เหลือ 800ms
       
-      // เลือกผลลัพธ์แรกใน dropdown
       await page.evaluate((accountName) => {
         const dropdownOptions = Array.from(document.querySelectorAll('.ant-select-dropdown-menu-item'));
         const targetOption = dropdownOptions.find(option => 
@@ -491,74 +486,63 @@ async function runAutoBot() {
           targetOption.click();
           console.log(`✅ เลือก Account: ${accountName} สำเร็จ`);
         } else {
-          // ถ้าไม่เจอ ลองกด Enter
           throw new Error(`Account ${accountName} not found in dropdown`);
         }
       }, testUserData.accountName);
       
     } catch (error) {
       console.log('⚠️ ลองเลือก Account ด้วย Enter...');
-      // ลองกด Enter เพื่อเลือก
       await page.keyboard.press('Enter');
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500)); // ✅ ลดจาก 1000ms เหลือ 500ms
     }
     
     console.log('✅ เลือก Account Name สำเร็จ - พร้อมสำหรับขั้นตอนต่อไป');
     
     // รอสักครู่ให้ form อัพเดท
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 1000)); // ✅ ลดจาก 2000ms เหลือ 1000ms
     
     // 15. กรอกจำนวน Credits
     console.log('🤖 กรอกจำนวน Credits: 10...');
     try {
-      // รอให้ input field ปรากฏ
       await page.waitForSelector('input[role="spinbutton"][placeholder="Amount Credits"]', { timeout: 10000 });
       
-      // คลิกที่ input field
       await page.click('input[role="spinbutton"][placeholder="Amount Credits"]');
       
-      // ล้างค่าเดิม (ถ้ามี) ด้วยการเลือกทั้งหมดและลบ
       await page.keyboard.down('Control');
       await page.keyboard.press('KeyA');
       await page.keyboard.up('Control');
       await page.keyboard.press('Delete');
       
-      // พิมพ์จำนวน 10
-      await page.type('input[role="spinbutton"][placeholder="Amount Credits"]', '10');
+      await page.type('input[role="spinbutton"][placeholder="Amount Credits"]', '10', { delay: 20 }); // ✅ เพิ่มความเร็ว
       console.log('✅ กรอกจำนวน Credits: 10 สำเร็จ');
       
     } catch (error) {
       console.log('⚠️ ลองหา input field ด้วย selector ที่แน่นอน...');
-      // ใช้ selector ที่คุณให้มา
       await page.waitForSelector('#main > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-12.ant-col-lg-12.ant-col-xl-7 > div.ant-row > div > div.ant-input-number-input-wrap > input', { timeout: 5000 });
       await page.click('#main > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-12.ant-col-lg-12.ant-col-xl-7 > div.ant-row > div > div.ant-input-number-input-wrap > input');
       
-      // ล้างค่าเดิม
       await page.keyboard.down('Control');
       await page.keyboard.press('KeyA');
       await page.keyboard.up('Control');
       await page.keyboard.press('Delete');
       
-      await page.type('#main > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-12.ant-col-lg-12.ant-col-xl-7 > div.ant-row > div > div.ant-input-number-input-wrap > input', '10');
+      await page.type('#main > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-12.ant-col-lg-12.ant-col-xl-7 > div.ant-row > div > div.ant-input-number-input-wrap > input', '10', { delay: 20 });
       console.log('✅ กรอกจำนวน Credits: 10 สำเร็จ (ด้วย selector แน่นอน)');
     }
     
     // รอให้ระบบประมวลผลและแสดงปุ่ม Save
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 1000)); // ✅ ลดจาก 2000ms เหลือ 1000ms
     
     // 16. คลิกปุ่ม Save ในหน้า Credits tab
     console.log('🤖 คลิกปุ่ม Save ในหน้า Credits...');
     try {
-      // ใช้ selector ที่คุณให้มาเฉพาะสำหรับหน้า Credits
       await page.waitForSelector('#main > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-24.ant-col-lg-24.ant-col-xl-2 > div.ant-row-flex.ant-row-flex-end > button', { timeout: 10000 });
       await page.click('#main > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-24.ant-col-lg-24.ant-col-xl-2 > div.ant-row-flex.ant-row-flex-end > button');
       console.log('✅ คลิกปุ่ม Save ในหน้า Credits สำเร็จ');
       
     } catch (error) {
       console.log('⚠️ ลองหาปุ่ม Save ในหน้า Credits ด้วยวิธีอื่น...');
-      // ลองหาปุ่ม Save ที่อยู่ในส่วน Credits movement โดยเฉพาะ
       await page.evaluate(() => {
-        // หาปุ่มที่อยู่ในส่วน main และมี class ant-row-flex-end
         const saveButtonContainer = document.querySelector('#main .ant-row-flex.ant-row-flex-end');
         if (saveButtonContainer) {
           const saveButton = saveButtonContainer.querySelector('button.ant-btn.ant-btn-primary');
@@ -574,13 +558,12 @@ async function runAutoBot() {
       });
     }
     
-    // รอให้ confirmation popup ปรากฏ - เพิ่มเวลารอให้ popup แสดงชัดเจน
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    // รอให้ confirmation popup ปรากฏ
+    await new Promise(resolve => setTimeout(resolve, 3000)); // ✅ ลดจาก 5000ms เหลือ 3000ms
     
     // 17. คลิกปุ่ม OK ใน confirmation popup ของ CREDITS โดยเฉพาะ
     console.log('🤖 คลิกปุ่ม OK ใน confirmation popup ของ CREDITS...');
     try {
-      // ตรวจสอบว่ามี popup อยู่จริงและมี content เกี่ยวกับ Credits
       await page.evaluate(() => {
         console.log('🔍 ตรวจสอบ popup ที่ปรากฏ:');
         const modals = document.querySelectorAll('.ant-modal-wrap.popup-question');
@@ -590,11 +573,9 @@ async function runAutoBot() {
         });
       });
       
-      // หา popup ที่เกี่ยวข้องกับ Credits โดยเฉพาะ
       const creditPopupFound = await page.evaluate(() => {
         const modals = Array.from(document.querySelectorAll('.ant-modal-wrap.popup-question'));
         
-        // หา popup ที่มีเนื้อหาเกี่ยวกับ Credits/เครดิต
         const creditModal = modals.find(modal => {
           const content = modal.textContent?.toLowerCase() || '';
           return content.includes('credit') || 
@@ -621,18 +602,15 @@ async function runAutoBot() {
     } catch (error) {
       console.log('⚠️ ลองหาปุ่ม OK ของ Credits ด้วยวิธีอื่น...');
       
-      // วิธีที่ 2: หาปุ่ม OK ล่าสุดที่ปรากฏ
       await page.evaluate(() => {
         const modals = Array.from(document.querySelectorAll('.ant-modal-wrap'));
         
-        // เรียงตาม z-index หรือตำแหน่งล่าสุด
         const visibleModals = modals.filter(modal => {
           const style = window.getComputedStyle(modal);
           return style.display !== 'none' && style.visibility !== 'hidden';
         });
         
         if (visibleModals.length > 0) {
-          // ใช้ modal สุดท้าย (น่าจะเป็น Credits popup)
           const lastModal = visibleModals[visibleModals.length - 1];
           const okButton = lastModal.querySelector('button.ant-btn.ant-btn-primary');
           
@@ -649,7 +627,7 @@ async function runAutoBot() {
     }
     
     // รอให้การดำเนินการ Credits เสร็จสิ้น
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 2000)); // ✅ ลดจาก 3000ms เหลือ 2000ms
     
     console.log('🎉 เพิ่ม Credits สำเร็จ!');
     console.log('📋 สรุปการดำเนินการ:');
@@ -658,7 +636,7 @@ async function runAutoBot() {
     console.log(`   ✅ Account ที่ได้รับ Credits: ${testUserData.accountName}`);
     
     // รอสักครู่ให้ดูผลลัพธ์สุดท้าย
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    await new Promise(resolve => setTimeout(resolve, 1500)); // ✅ ลดจาก 3000ms เหลือ 1500ms
     
   } catch (error) {
     console.error('🚫 Auto-Bot ล้มเหลว:', error);

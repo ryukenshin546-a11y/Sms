@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Link URL Simulator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 15px; margin: 5px; border: none; border-radius: 3px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 11px; }
+        textarea, input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 3px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Magic Link URL Simulator & Tester</h1>
+        
+        <div class="section info">
+            <h3>📊 Your Magic Link Analysis</h3>
+            <p><strong>Original Magic Link:</strong></p>
+            <pre>https://mnhdueclyzwtfkmwttkc.supabase.co/auth/v1/verify?token=a25091143e69338c363e18d7f757d75cdaa483b9797c8750036460b9&type=magiclink&redirect_to=http://localhost:2020/verify-email</pre>
+            
+            <p><strong>After Redirect (Error):</strong></p>
+            <pre>http://localhost:2020/verify-email#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired</pre>
+            
+            <div class="warning">
+                <p><strong>⚠️ ปัญหาที่พบ:</strong> Token หมดอายุก่อนที่ผู้ใช้จะคลิก</p>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div>
+                <div class="section">
+                    <h3>🧪 Simulate URL Scenarios</h3>
+                    
+                    <button class="btn-success" onclick="simulateDirectToken()">✅ Direct Token URL</button>
+                    <button class="btn-primary" onclick="simulateTokenHash()">🔗 Token Hash URL</button>
+                    <button class="btn-secondary" onclick="simulateAccessToken()">🎟️ Access Token URL</button>
+                    <button class="btn-danger" onclick="simulateExpiredError()">❌ Expired Error URL</button>
+                    
+                    <div id="simulationResult"></div>
+                </div>
+
+                <div class="section">
+                    <h3>🔍 URL Parser Test</h3>
+                    <label>Test URL:</label>
+                    <textarea id="testUrl" rows="3" placeholder="Paste magic link URL here..."></textarea>
+                    <button class="btn-primary" onclick="parseAndAnalyze()">📝 Parse & Analyze</button>
+                    <div id="parseResult"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="section">
+                    <h3>📋 Current Page State</h3>
+                    <div id="pageState">
+                        <p><strong>Current URL:</strong> <span id="currentUrl"></span></p>
+                        <p><strong>Parameters:</strong> <span id="currentParams"></span></p>
+                        <p><strong>Hash:</strong> <span id="currentHash"></span></p>
+                    </div>
+                    <button class="btn-secondary" onclick="refreshPageState()">🔄 Refresh</button>
+                </div>
+
+                <div class="section">
+                    <h3>⚡ Quick Actions</h3>
+                    <button class="btn-primary" onclick="openInNewTab('http://localhost:2020/verify-email')">🏠 Open VerifyEmail Page</button>
+                    <button class="btn-secondary" onclick="copyToClipboard(getCurrentUrl())">📋 Copy Current URL</button>
+                    <button class="btn-danger" onclick="clearUrl()">🗑️ Clear URL</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📝 Test Results Log</h3>
+            <button class="btn-danger" onclick="clearLog()">🗑️ Clear Log</button>
+            <div id="testLog" style="max-height: 300px; overflow-y: auto; font-size: 12px;">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('testLog');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+            
+            const entry = document.createElement('div');
+            entry.className = `section ${className}`;
+            entry.style.margin = '5px 0';
+            entry.style.padding = '8px';
+            entry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        function clearLog() {
+            document.getElementById('testLog').innerHTML = '';
+        }
+
+        function simulateDirectToken() {
+            const url = 'http://localhost:2020/verify-email?token=a25091143e69338c363e18d7f757d75cdaa483b9797c8750036460b9&type=magiclink';
+            window.history.replaceState({}, 'Direct Token Test', url);
+            refreshPageState();
+            log('🧪 Simulated direct token URL', 'success');
+            
+            document.getElementById('simulationResult').innerHTML = `
+                <div class="success" style="margin-top: 10px;">
+                    <h4>✅ Direct Token Simulation</h4>
+                    <p>URL updated with direct token from Supabase</p>
+                    <p><strong>VerifyEmail.tsx should:</strong></p>
+                    <ul>
+                        <li>Detect token in query params</li>
+                        <li>Call handleDirectSupabaseVerification()</li>
+                        <li>Use supabase.auth.verifyOtp() directly</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function simulateTokenHash() {
+            const url = 'http://localhost:2020/verify-email?token_hash=abc123def456ghi789&type=email';
+            window.history.replaceState({}, 'Token Hash Test', url);
+            refreshPageState();
+            log('🧪 Simulated token_hash URL', 'success');
+            
+            document.getElementById('simulationResult').innerHTML = `
+                <div class="info" style="margin-top: 10px;">
+                    <h4>🔗 Token Hash Simulation</h4>
+                    <p>URL updated with token_hash for server-side verification</p>
+                    <p><strong>VerifyEmail.tsx should:</strong></p>
+                    <ul>
+                        <li>Detect token_hash in query params</li>
+                        <li>Call handleServerSideVerification()</li>
+                        <li>POST to /api/auth/confirm</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function simulateAccessToken() {
+            const url = 'http://localhost:2020/verify-email#access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9&token_type=bearer&expires_in=3600&refresh_token=xyz789abc123';
+            window.history.replaceState({}, 'Access Token Test', url);
+            refreshPageState();
+            log('🧪 Simulated access_token URL', 'success');
+            
+            document.getElementById('simulationResult').innerHTML = `
+                <div class="success" style="margin-top: 10px;">
+                    <h4>🎟️ Access Token Simulation</h4>
+                    <p>URL updated with access_token in fragments</p>
+                    <p><strong>VerifyEmail.tsx should:</strong></p>
+                    <ul>
+                        <li>Detect access_token in hash fragments</li>
+                        <li>Call handleClientSideVerification()</li>
+                        <li>Use supabase.auth.setSession()</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function simulateExpiredError() {
+            const url = 'http://localhost:2020/verify-email#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired';
+            window.history.replaceState({}, 'Expired Error Test', url);
+            refreshPageState();
+            log('🧪 Simulated expired error URL', 'warning');
+            
+            document.getElementById('simulationResult').innerHTML = `
+                <div class="error" style="margin-top: 10px;">
+                    <h4>❌ Expired Error Simulation</h4>
+                    <p>URL updated with error from expired magic link</p>
+                    <p><strong>VerifyEmail.tsx should:</strong></p>
+                    <ul>
+                        <li>Detect error in hash fragments</li>
+                        <li>Call handleVerificationError()</li>
+                        <li>Show "ลิงก์ยืนยันหมดอายุแล้ว"</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function parseAndAnalyze() {
+            const url = document.getElementById('testUrl').value;
+            if (!url) {
+                log('❌ Please enter a URL to analyze', 'error');
+                return;
+            }
+
+            try {
+                const urlObj = new URL(url);
+                const queryParams = Object.fromEntries(urlObj.searchParams.entries());
+                const hash = urlObj.hash.substring(1);
+                const fragmentParams = hash ? Object.fromEntries(new URLSearchParams(hash).entries()) : {};
+                
+                let analysis = '<div class="info" style="margin-top: 10px;">';
+                analysis += '<h4>🔍 URL Analysis Results:</h4>';
+                analysis += `<p><strong>Host:</strong> ${urlObj.hostname}</p>`;
+                analysis += `<p><strong>Path:</strong> ${urlObj.pathname}</p>`;
+                
+                // Detect URL type
+                let urlType = 'Unknown';
+                let expectedBehavior = '';
+                
+                if (urlObj.hostname.includes('supabase.co') && urlObj.pathname.includes('/auth/v1/verify')) {
+                    urlType = 'Direct Supabase Auth URL';
+                    expectedBehavior = 'This will redirect to your app with tokens or errors';
+                } else if (queryParams.token) {
+                    urlType = 'Direct Token URL';
+                    expectedBehavior = 'handleDirectSupabaseVerification() should process this';
+                } else if (queryParams.token_hash) {
+                    urlType = 'Server-Side Token Hash URL';
+                    expectedBehavior = 'handleServerSideVerification() should process this';
+                } else if (hash.includes('access_token')) {
+                    urlType = 'Client-Side Access Token URL';
+                    expectedBehavior = 'handleClientSideVerification() should process this';
+                } else if (hash.includes('error') || queryParams.error) {
+                    urlType = 'Error URL';
+                    expectedBehavior = 'handleVerificationError() should process this';
+                }
+                
+                analysis += `<p><strong>🎯 URL Type:</strong> ${urlType}</p>`;
+                analysis += `<p><strong>📋 Expected Behavior:</strong> ${expectedBehavior}</p>`;
+                
+                if (Object.keys(queryParams).length > 0) {
+                    analysis += '<p><strong>Query Parameters:</strong></p>';
+                    analysis += `<pre>${JSON.stringify(queryParams, null, 2)}</pre>`;
+                }
+                
+                if (Object.keys(fragmentParams).length > 0) {
+                    analysis += '<p><strong>Fragment Parameters:</strong></p>';
+                    analysis += `<pre>${JSON.stringify(fragmentParams, null, 2)}</pre>`;
+                }
+                
+                analysis += '</div>';
+                document.getElementById('parseResult').innerHTML = analysis;
+                
+                log('✅ URL analysis completed', 'success');
+                
+            } catch (error) {
+                log(`❌ URL parsing error: ${error.message}`, 'error');
+                document.getElementById('parseResult').innerHTML = 
+                    `<div class="error">❌ Invalid URL: ${error.message}</div>`;
+            }
+        }
+
+        function refreshPageState() {
+            const currentUrl = window.location.href;
+            const params = new URLSearchParams(window.location.search);
+            const hash = window.location.hash;
+            
+            document.getElementById('currentUrl').textContent = currentUrl;
+            document.getElementById('currentParams').textContent = 
+                params.toString() || '(none)';
+            document.getElementById('currentHash').textContent = 
+                hash || '(none)';
+        }
+
+        function getCurrentUrl() {
+            return window.location.href;
+        }
+
+        function openInNewTab(url) {
+            window.open(url, '_blank');
+            log(`🔗 Opened ${url} in new tab`);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                log('📋 URL copied to clipboard', 'success');
+            }).catch(err => {
+                log(`❌ Copy failed: ${err.message}`, 'error');
+            });
+        }
+
+        function clearUrl() {
+            window.history.replaceState({}, 'Cleared', window.location.pathname);
+            refreshPageState();
+            document.getElementById('simulationResult').innerHTML = '';
+            log('🗑️ URL cleared', 'info');
+        }
+
+        // Initialize page
+        window.onload = function() {
+            refreshPageState();
+            log('🚀 Magic Link URL Simulator initialized');
+            
+            // Pre-fill with your expired URL
+            document.getElementById('testUrl').value = 'http://localhost:2020/verify-email#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired';
+        };
+
+        // Listen for URL changes
+        window.addEventListener('popstate', function() {
+            refreshPageState();
+            log('🔄 URL changed, refreshing state...');
+        });
+    </script>
+</body>
+</html>

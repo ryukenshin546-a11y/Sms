@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Email Verification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-section {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #0052a3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            background: #f5f5f5;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Email Verification Test</h1>
+    
+    <div class="test-section">
+        <h3>📧 ทดสอบการส่ง Email Verification</h3>
+        <input type="email" id="testEmail" placeholder="กรอก email ของคุณ" value="riwkindo123@gmail.com" style="width: 300px; padding: 8px;">
+        <br>
+        <button onclick="testEmailVerification()">ส่ง Email Verification</button>
+        <button onclick="testCustomSMTP()">ทดสอบ Custom SMTP</button>
+        <button onclick="testEdgeFunction()">ทดสอบ Edge Function</button>
+        <button onclick="testDirectSupabase()">ทดสอบ Direct Supabase</button>
+        <div id="emailResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>🔍 ตรวจสอบการตั้งค่า Supabase</h3>
+        <button onclick="checkSupabaseConfig()">ตรวจสอบ Configuration</button>
+        <div id="configResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>📊 Debug Information</h3>
+        <button onclick="showDebugInfo()">แสดง Debug Info</button>
+        <div id="debugInfo" class="result" style="display: none;"></div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+        const supabase = createClient(
+            'https://mnhdueclyzwtfkmwttkc.supabase.co',
+            'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH'
+        );
+
+        window.supabase = supabase;
+
+        // ทดสอบ Custom SMTP Service
+        window.testCustomSMTP = async function() {
+            const email = document.getElementById('testEmail').value;
+            const resultDiv = document.getElementById('emailResult');
+            
+            if (!email) {
+                showResult(resultDiv, '❌ กรุณากรอก email address', 'error');
+                return;
+            }
+
+            try {
+                showResult(resultDiv, '⏳ กำลังทดสอบ Custom SMTP Service...', '');
+                
+                const { data, error } = await supabase.functions.invoke('send-custom-email', {
+                    body: { 
+                        email: email,
+                        type: 'verification',
+                        verificationToken: 'test-token-' + Date.now()
+                    }
+                });
+
+                if (error) throw error;
+
+                console.log('✅ Custom SMTP success:', data);
+                showResult(resultDiv, `✅ Custom SMTP Service สำเร็จ!\n${JSON.stringify(data, null, 2)}`, 'success');
+                
+            } catch (error) {
+                console.error('❌ Custom SMTP error:', error);
+                showResult(resultDiv, `❌ Custom SMTP เกิดข้อผิดพลาด: ${error.message}`, 'error');
+            }
+        }
+
+        // ทดสอบการส่ง Email Verification
+        window.testEmailVerification = async function() {
+            const email = document.getElementById('testEmail').value;
+            const resultDiv = document.getElementById('emailResult');
+            
+            if (!email) {
+                showResult(resultDiv, '❌ กรุณากรอก email address', 'error');
+                return;
+            }
+
+            try {
+                showResult(resultDiv, '⏳ กำลังส่ง email verification...', '');
+                
+                console.log('📧 Sending verification email to:', email);
+
+                // Try using signInWithOtp (Magic Link)
+                const { data, error } = await supabase.auth.signInWithOtp({
+                    email: email,
+                    options: {
+                        emailRedirectTo: `${window.location.origin}/verify-email`
+                    }
+                });
+
+                if (error) throw error;
+
+                console.log('✅ Email sent successfully:', data);
+                showResult(resultDiv, `✅ ส่ง email verification สำเร็จ!\nตรวจสอบ inbox ของ ${email}`, 'success');
+                
+            } catch (error) {
+                console.error('❌ Email verification error:', error);
+                showResult(resultDiv, `❌ เกิดข้อผิดพลาด: ${error.message}`, 'error');
+            }
+        }
+
+        // ทดสอบ Edge Function
+        window.testEdgeFunction = async function() {
+            const email = document.getElementById('testEmail').value;
+            const resultDiv = document.getElementById('emailResult');
+            
+            if (!email) {
+                showResult(resultDiv, '❌ กรุณากรอก email address', 'error');
+                return;
+            }
+
+            try {
+                showResult(resultDiv, '⏳ กำลังทดสอบ Edge Function...', '');
+                
+                const { data, error } = await supabase.functions.invoke('send-email-verification', {
+                    body: { email: email }
+                });
+
+                if (error) throw error;
+
+                console.log('✅ Edge Function success:', data);
+                showResult(resultDiv, `✅ Edge Function ทำงานสำเร็จ!\nResult: ${JSON.stringify(data, null, 2)}`, 'success');
+                
+            } catch (error) {
+                console.error('❌ Edge Function error:', error);
+                showResult(resultDiv, `❌ Edge Function เกิดข้อผิดพลาด: ${error.message}`, 'error');
+            }
+        }
+
+        // ทดสอบ Direct Supabase
+        window.testDirectSupabase = async function() {
+            const email = document.getElementById('testEmail').value;
+            const resultDiv = document.getElementById('emailResult');
+            
+            if (!email) {
+                showResult(resultDiv, '❌ กรุณากรอก email address', 'error');
+                return;
+            }
+
+            try {
+                showResult(resultDiv, '⏳ กำลังทดสอบ Direct Supabase...', '');
+                
+                // Test with different approaches
+                console.log('Testing direct Supabase auth...');
+
+                // Approach 1: Magic Link
+                const { data: magicData, error: magicError } = await supabase.auth.signInWithOtp({
+                    email: email,
+                    options: {
+                        shouldCreateUser: false
+                    }
+                });
+
+                if (magicError) {
+                    throw new Error(`Magic Link failed: ${magicError.message}`);
+                }
+
+                console.log('✅ Magic Link sent:', magicData);
+                showResult(resultDiv, `✅ Direct Supabase สำเร็จ!\nMagic Link sent to: ${email}`, 'success');
+                
+            } catch (error) {
+                console.error('❌ Direct Supabase error:', error);
+                showResult(resultDiv, `❌ Direct Supabase เกิดข้อผิดพลาด: ${error.message}`, 'error');
+            }
+        }
+
+        // ตรวจสอบการตั้งค่า Supabase
+        window.checkSupabaseConfig = async function() {
+            const resultDiv = document.getElementById('configResult');
+            
+            try {
+                showResult(resultDiv, '⏳ กำลังตรวจสอบการตั้งค่า...', '');
+                
+                // Check if user is authenticated
+                const { data: { user } } = await supabase.auth.getUser();
+                
+                // Check project settings
+                const config = {
+                    supabaseUrl: supabase.supabaseUrl,
+                    supabaseKey: supabase.supabaseKey.substring(0, 20) + '...',
+                    currentUser: user ? `${user.email} (${user.id.substring(0, 8)}...)` : 'ไม่มี user login',
+                    userEmailConfirmed: user?.email_confirmed_at ? 'ยืนยันแล้ว' : 'ยังไม่ยืนยัน'
+                };
+                
+                console.log('Supabase Config:', config);
+                
+                showResult(resultDiv, `✅ การตั้งค่า Supabase:\n${JSON.stringify(config, null, 2)}`, 'success');
+                
+            } catch (error) {
+                console.error('❌ Config check error:', error);
+                showResult(resultDiv, `❌ เกิดข้อผิดพลาด: ${error.message}`, 'error');
+            }
+        }
+
+        // แสดง Debug Information
+        window.showDebugInfo = function() {
+            const resultDiv = document.getElementById('debugInfo');
+            
+            const debugInfo = {
+                currentUrl: window.location.href,
+                origin: window.location.origin,
+                userAgent: navigator.userAgent,
+                timestamp: new Date().toISOString(),
+                supabaseUrl: 'https://mnhdueclyzwtfkmwttkc.supabase.co',
+                expectedRedirectUrl: `${window.location.origin}/verify-email`
+            };
+            
+            console.log('Debug Info:', debugInfo);
+            showResult(resultDiv, `🔍 Debug Information:\n${JSON.stringify(debugInfo, null, 2)}`, '');
+        }
+
+        function showResult(div, message, type) {
+            div.style.display = 'block';
+            div.textContent = message;
+            div.className = `result ${type}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 /**
  * OTP Verification Component
  * Phone number verification with SMS OTP
- * Updated: September 14, 2025
+ * Updated: September 15, 2025 - Use Edge Function for CORS fix
  */
 
 import React, { useState, useEffect } from 'react';
@@ -11,12 +11,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Phone, Shield, CheckCircle } from 'lucide-react';
-import { simpleOTPService, SendOTPRequest, VerifyOTPRequest, OTPResult } from '@/services/simpleOTPService';
+import { supabase } from '@/lib/supabase';
+import { edgeFunctionOTPService } from '@/services/edgeFunctionOTPService';
 
 export interface OTPVerificationProps {
   onSuccess?: (phoneNumber: string) => void;
   onError?: (error: string) => void;
   initialPhoneNumber?: string;
+  userId?: string;
   className?: string;
 }
 
@@ -26,12 +28,14 @@ export const OTPVerification: React.FC<OTPVerificationProps> = ({
   onSuccess,
   onError,
   initialPhoneNumber = '',
+  userId,
   className = ''
 }) => {
   const [step, setStep] = useState<VerificationStep>('phone');
   const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber);
   const [otpCode, setOtpCode] = useState('');
   const [sessionId, setSessionId] = useState('');
+  const [referenceCode, setReferenceCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -71,16 +75,17 @@ export const OTPVerification: React.FC<OTPVerificationProps> = ({
 
     try {
       const formattedPhone = formatPhoneNumber(phoneNumber);
-      const request: SendOTPRequest = {
-        phoneNumber: formattedPhone
-      };
-
-      const result = await simpleOTPService.sendOTP(request);
       
-      if (result.success && result.session) {
-        setSessionId(result.session.id);
+      const result = await edgeFunctionOTPService.sendOTP({
+        phoneNumber: formattedPhone,
+        userId: userId || 'registration-user-' + Date.now()
+      });
+      
+      if (result.success && result.otpId && result.referenceCode) {
+        setSessionId(result.otpId);
+        setReferenceCode(result.referenceCode);
         setStep('otp');
-        setSuccess('OTP sent to your phone number');
+        setSuccess(`OTP sent to your phone number (Ref: ${result.referenceCode})`);
         setCountdown(60); // 60 second cooldown
       } else {
         setError(result.message);
@@ -105,12 +110,11 @@ export const OTPVerification: React.FC<OTPVerificationProps> = ({
     setError('');
 
     try {
-      const request: VerifyOTPRequest = {
-        sessionId,
+      const result = await edgeFunctionOTPService.verifyOTP({
+        otpId: sessionId,
+        referenceCode: referenceCode,
         otpCode: otpCode.trim()
-      };
-
-      const result = await simpleOTPService.verifyOTP(request);
+      });
       
       if (result.success) {
         setStep('success');

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Link Fragment Handler Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+        .warning { background: #fff3cd; border-color: #ffeaa7; }
+        button { padding: 10px 15px; margin: 5px; border: none; border-radius: 3px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; font-size: 11px; }
+        textarea, input { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 3px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Magic Link Fragment Handler Test</h1>
+        
+        <div class="section warning">
+            <h3>⚠️ ปัญหาที่เจอ:</h3>
+            <p><strong>URL:</strong> <code>http://localhost:2020/verify-email#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired</code></p>
+            <p><strong>สาเหตุ:</strong> Supabase ใช้ URL fragments (#) แทน query parameters (?) ซึ่ง React Router ไม่จับได้</p>
+        </div>
+
+        <div class="section info">
+            <h3>📊 Current URL Analysis</h3>
+            <div id="currentUrlAnalysis"></div>
+            <button class="btn-primary" onclick="analyzeCurrentUrl()">🔍 Analyze Current URL</button>
+        </div>
+
+        <div class="grid">
+            <div>
+                <div class="section">
+                    <h3>🧪 Test Fragment Parsing</h3>
+                    <label>Test URL with fragments:</label>
+                    <textarea id="testUrl" rows="3" placeholder="Paste magic link URL here...">http://localhost:2020/verify-email#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired</textarea>
+                    <button class="btn-secondary" onclick="parseTestUrl()">📝 Parse URL</button>
+                    <div id="parseResults"></div>
+                </div>
+
+                <div class="section">
+                    <h3>🔧 URL Generator</h3>
+                    <p>Simulate different URL formats:</p>
+                    <button class="btn-secondary" onclick="simulateSuccess()">✅ Success URL</button>
+                    <button class="btn-secondary" onclick="simulateExpired()">⏰ Expired URL</button>
+                    <button class="btn-secondary" onclick="simulateInvalid()">❌ Invalid URL</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="section">
+                    <h3>📋 Fragment vs Query Comparison</h3>
+                    <div id="comparisonResults"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>🔧 Fragment Handler Implementation</h3>
+            <pre id="codeExample">
+// ❌ Old way - only handles query parameters
+const token = searchParams.get('token');
+const error = searchParams.get('error');
+
+// ✅ New way - handles both fragments and query parameters
+const hash = window.location.hash.substring(1);
+const fragmentParams = new URLSearchParams(hash);
+const token = fragmentParams.get('token') || searchParams.get('token');
+const error = fragmentParams.get('error') || searchParams.get('error');
+            </pre>
+        </div>
+
+        <div class="section">
+            <h3>📝 Test Log</h3>
+            <div id="testLog" style="max-height: 300px; overflow-y: auto; font-size: 12px;">
+                <p><em>Click buttons above to test...</em></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('testLog');
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : type === 'warning' ? 'warning' : 'info';
+            
+            const entry = `[${timestamp}] ${message}`;
+            
+            logDiv.innerHTML += `
+                <div class="section ${className}" style="margin: 5px 0; padding: 8px;">
+                    <strong>${entry}</strong>
+                </div>
+            `;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(entry);
+        }
+
+        function parseUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                const queryParams = Object.fromEntries(urlObj.searchParams.entries());
+                
+                // Parse fragments
+                const hash = urlObj.hash.substring(1);
+                const fragmentParams = hash ? Object.fromEntries(new URLSearchParams(hash).entries()) : {};
+                
+                return {
+                    base: `${urlObj.origin}${urlObj.pathname}`,
+                    query: queryParams,
+                    fragment: fragmentParams,
+                    hasFragment: hash.length > 0,
+                    hasQuery: urlObj.search.length > 0
+                };
+            } catch (error) {
+                return { error: error.message };
+            }
+        }
+
+        function analyzeCurrentUrl() {
+            const currentUrl = window.location.href;
+            const analysis = parseUrl(currentUrl);
+            
+            let html = '<div class="info" style="padding: 10px;">';
+            html += `<h4>🔍 Current URL Analysis:</h4>`;
+            html += `<p><strong>Full URL:</strong> ${currentUrl}</p>`;
+            html += `<p><strong>Base:</strong> ${analysis.base || 'N/A'}</p>`;
+            html += `<p><strong>Has Query:</strong> ${analysis.hasQuery ? 'Yes' : 'No'}</p>`;
+            html += `<p><strong>Has Fragment:</strong> ${analysis.hasFragment ? 'Yes' : 'No'}</p>`;
+            
+            if (analysis.query && Object.keys(analysis.query).length > 0) {
+                html += `<p><strong>Query Parameters:</strong></p><pre>${JSON.stringify(analysis.query, null, 2)}</pre>`;
+            }
+            
+            if (analysis.fragment && Object.keys(analysis.fragment).length > 0) {
+                html += `<p><strong>Fragment Parameters:</strong></p><pre>${JSON.stringify(analysis.fragment, null, 2)}</pre>`;
+            }
+            
+            html += '</div>';
+            document.getElementById('currentUrlAnalysis').innerHTML = html;
+            
+            log('Current URL analyzed');
+        }
+
+        function parseTestUrl() {
+            const url = document.getElementById('testUrl').value;
+            if (!url) {
+                log('Please enter a URL to test', 'error');
+                return;
+            }
+
+            const analysis = parseUrl(url);
+            
+            if (analysis.error) {
+                log(`URL parsing error: ${analysis.error}`, 'error');
+                document.getElementById('parseResults').innerHTML = 
+                    `<div class="error">❌ Error: ${analysis.error}</div>`;
+                return;
+            }
+
+            let html = '<div class="success" style="margin-top: 10px; padding: 10px;">';
+            html += '<h4>📊 Parsing Results:</h4>';
+            html += `<p><strong>Base URL:</strong> ${analysis.base}</p>`;
+            html += `<p><strong>Method:</strong> ${analysis.hasFragment ? 'Fragment (#)' : analysis.hasQuery ? 'Query (?)' : 'None'}</p>`;
+            
+            const params = analysis.hasFragment ? analysis.fragment : analysis.query;
+            if (params && Object.keys(params).length > 0) {
+                html += '<p><strong>Parameters:</strong></p>';
+                Object.entries(params).forEach(([key, value]) => {
+                    html += `<p style="margin-left: 20px;"><code>${key}</code>: ${value}</p>`;
+                });
+                
+                // Analyze specific parameters
+                if (params.error) {
+                    const errorType = params.error === 'access_denied' && params.error_description?.includes('expired') ? 'Expired Link' : 
+                                     params.error === 'otp_expired' ? 'OTP Expired' : 'Other Error';
+                    html += `<p><strong>🚨 Error Detected:</strong> ${errorType}</p>`;
+                }
+                
+                if (params.token_hash || params.token) {
+                    html += '<p><strong>✅ Token Found:</strong> Ready for verification</p>';
+                }
+            }
+            
+            html += '</div>';
+            document.getElementById('parseResults').innerHTML = html;
+            
+            // Update comparison
+            updateComparison(analysis);
+            
+            log('Test URL parsed successfully', 'success');
+        }
+
+        function updateComparison(analysis) {
+            let html = '<div class="info" style="padding: 10px;">';
+            html += '<h4>📋 Fragment vs Query Comparison:</h4>';
+            html += '<table style="width: 100%; border-collapse: collapse;">';
+            html += '<tr style="border-bottom: 1px solid #ddd;"><th>Aspect</th><th>Current URL</th></tr>';
+            html += `<tr><td>Method</td><td>${analysis.hasFragment ? '🔗 Fragment (#)' : analysis.hasQuery ? '❓ Query (?)' : '❌ None'}</td></tr>`;
+            html += `<tr><td>React Router</td><td>${analysis.hasFragment ? '❌ Not detected' : analysis.hasQuery ? '✅ Detected' : '❌ None'}</td></tr>`;
+            html += `<tr><td>Parameters</td><td>${Object.keys(analysis.hasFragment ? analysis.fragment : analysis.query || {}).length}</td></tr>`;
+            html += '</table>';
+            
+            if (analysis.hasFragment) {
+                html += '<p style="color: orange;"><strong>⚠️ Warning:</strong> Fragment-based URLs require special handling!</p>';
+            }
+            
+            html += '</div>';
+            document.getElementById('comparisonResults').innerHTML = html;
+        }
+
+        function simulateSuccess() {
+            const successUrl = `${window.location.origin}/verify-email#token_hash=abc123def456&type=magiclink`;
+            document.getElementById('testUrl').value = successUrl;
+            parseTestUrl();
+            log('Generated success URL simulation', 'success');
+        }
+
+        function simulateExpired() {
+            const expiredUrl = `${window.location.origin}/verify-email#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired`;
+            document.getElementById('testUrl').value = expiredUrl;
+            parseTestUrl();
+            log('Generated expired URL simulation', 'warning');
+        }
+
+        function simulateInvalid() {
+            const invalidUrl = `${window.location.origin}/verify-email#error=invalid_request&error_description=Invalid+token`;
+            document.getElementById('testUrl').value = invalidUrl;
+            parseTestUrl();
+            log('Generated invalid URL simulation', 'error');
+        }
+
+        // Auto-analyze current URL on load
+        window.onload = function() {
+            log('🚀 Magic Link Fragment Handler Test loaded');
+            analyzeCurrentUrl();
+            
+            // Show implementation code
+            const codeExample = `// ❌ Old way - only handles query parameters
+const token = searchParams.get('token');
+const error = searchParams.get('error');
+
+// ✅ New way - handles both fragments and query parameters  
+const hash = window.location.hash.substring(1);
+if (hash) {
+  const fragmentParams = new URLSearchParams(hash);
+  token = fragmentParams.get('token') || searchParams.get('token');
+  error = fragmentParams.get('error') || searchParams.get('error');
+}
+
+// Handle specific errors
+if (error === 'access_denied' && errorDescription?.includes('expired')) {
+  setVerificationStatus('expired');
+} else if (error === 'otp_expired') {
+  setVerificationStatus('expired');  
+}`;
+            
+            document.getElementById('codeExample').textContent = codeExample;
+        };
+    </script>
+</body>
+</html>
