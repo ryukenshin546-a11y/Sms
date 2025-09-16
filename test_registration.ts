@@ -3,7 +3,7 @@
 
 // Set environment variables for testing
 process.env.VITE_SUPABASE_URL = 'https://mnhdueclyzwtfkmwttkc.supabase.co';
-process.env.VITE_SUPABASE_ANON_KEY = 'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH';
+process.env.SUPABASE_CLIENT_API_KEYY = 'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH';
 process.env.VITE_SUPABASE_SERVICE_KEY = 'sb_secret_QZOyKOuNRIndQKMItJVD1Q_OSyctXNf';
 
 // Create supabase client directly for testing
@@ -12,7 +12,7 @@ import type { Database } from './src/types/database.types';
 
 const supabase = createClient<Database>(
   process.env.VITE_SUPABASE_URL!,
-  process.env.VITE_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_CLIENT_API_KEYY!
 );
 
 // Import ProfileService and create instance with our client
@@ -21,7 +21,7 @@ import { ProfileService } from './src/services/database';cript for registration 
 
 // Set environment variables for testing
 process.env.VITE_SUPABASE_URL = 'https://mnhdueclyzwtfkmwttkc.supabase.co';
-process.env.VITE_SUPABASE_ANON_KEY = 'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH';
+process.env.SUPABASE_CLIENT_API_KEYY = 'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH';
 process.env.VITE_SUPABASE_SERVICE_KEY = 'sb_secret_QZOyKOuNRIndQKMItJVD1Q_OSyctXNf';
 
 import { ProfileService } from './src/services/database';

@@ -463,7 +463,7 @@ services:
 ```bash
 # Environment Variables
 VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_CLIENT_API_KEYY=your_anon_key
 VITE_SMS_ADMIN_USERNAME=admin_username
 VITE_SMS_ADMIN_PASSWORD=admin_password
 DATABASE_URL=postgresql://user:pass@localhost:5432/db

@@ -412,430 +412,262 @@ const Profile_Enhanced = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
 
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Header Section */}
-        <div className="mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <Avatar className="h-16 w-16">
-                    <AvatarFallback className="text-lg">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Header */}
+        <div className="mb-6">
+          <Card className="shadow-sm border-0 bg-white">
+            <CardContent className="p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                <div className="flex items-center gap-4 w-full sm:w-auto">
+                  <Avatar className="h-20 w-20 ring-2 ring-slate-100 shadow-sm">
+                    <AvatarFallback className="text-2xl font-semibold bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
                       {profile.first_name?.[0]}{profile.last_name?.[0]}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
-                    <h1 className="text-2xl font-bold">
-                      {profile.first_name} {profile.last_name}
-                    </h1>
-                    <p className="text-gray-600">@{profile.username}</p>
-                    <div className="flex items-center space-x-2 mt-1">
-                      <Badge variant="outline">{profile.account_type === 'personal' ? 'บุคคล' : 'นิติบุคคล'}</Badge>
-                      {profile.phone && (
-                        <Badge variant="outline" className="text-xs">
-                          📱 {profile.phone}
-                        </Badge>
-                      )}
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2">
+                      <h1 className="text-2xl font-bold text-slate-900">{profile.first_name} {profile.last_name}</h1>
+                      <span className="text-sm text-slate-500">@{profile.username}</span>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">✉️ {user.email}</p>
+                    <p className="text-sm text-slate-600 mt-1">{user.email}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge className="bg-slate-100 text-slate-800">{profile.account_type === 'personal' ? 'บุคคล' : 'นิติบุคคล'}</Badge>
+                      {profile.phone && <Badge className="bg-slate-50 text-slate-700">📱 {profile.phone}</Badge>}
+                    </div>
                   </div>
                 </div>
 
-                {/* Verification Status */}
-                <div className="text-right">
-                  <div className="space-y-2">
-                    {profile.can_use_autobot ? (
-                      <Badge variant="default" className="bg-green-100 text-green-800">
-                        <Bot className="h-3 w-3 mr-1" />
-                        สามารถใช้ Auto-Bot ได้
-                      </Badge>
-                    ) : (
-                      <Badge variant="destructive">
-                        <Shield className="h-3 w-3 mr-1" />
-                        ต้องยืนยันตัวตนก่อน
-                      </Badge>
-                    )}
-                  </div>
+                <div className="ml-auto flex items-center gap-3">
+                  <Button variant="outline" size="sm" className="hidden sm:inline">Upload new picture</Button>
+                  <Button variant="ghost" size="sm" className="text-red-600 hidden sm:inline">Remove</Button>
+                  {profile.can_use_autobot ? (
+                    <Badge className="bg-green-100 text-green-800">สามารถใช้ Auto-Bot ได้</Badge>
+                  ) : (
+                    <Badge className="bg-amber-50 text-amber-800">ต้องยืนยันตัวตนก่อน</Badge>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Personal Information - Left Column */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center space-x-2">
-                    <User className="h-5 w-5" />
-                    <span>ข้อมูลส่วนตัว</span>
-                  </CardTitle>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => editMode ? handleCancelEdit() : setEditMode(true)}
-                    disabled={isSaving}
-                  >
-                    {editMode ? 'ยกเลิก' : 'แก้ไข'}
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="first_name">ชื่อ</Label>
-                  <Input
-                    id="first_name"
-                    value={editMode ? editData.first_name : (profile.first_name || '')}
-                    onChange={(e) => editMode && setEditData(prev => ({ ...prev, first_name: e.target.value }))}
-                    placeholder="ชื่อ"
-                    disabled={!editMode || isSaving}
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="last_name">นามสกุล</Label>
-                  <Input
-                    id="last_name"
-                    value={editMode ? editData.last_name : (profile.last_name || '')}
-                    onChange={(e) => editMode && setEditData(prev => ({ ...prev, last_name: e.target.value }))}
-                    placeholder="นามสกุล"
-                    disabled={!editMode || isSaving}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="username">ชื่อผู้ใช้</Label>
-                  <Input
-                    id="username"
-                    value={editMode ? editData.username : (profile.username || '')}
-                    onChange={(e) => editMode && setEditData(prev => ({ ...prev, username: e.target.value }))}
-                    placeholder="username"
-                    disabled={!editMode || isSaving}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="profile_phone">เบอร์โทรศัพท์</Label>
-                  <Input
-                    id="profile_phone"
-                    value={editMode ? editData.phone : (profile.phone || '')}
-                    onChange={(e) => editMode && setEditData(prev => ({ ...prev, phone: e.target.value }))}
-                    placeholder="0812345678"
-                    disabled={!editMode || isSaving}
-                  />
-                  {profile.phone && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      สถานะ: {profile.phone_verified ? 'ยืนยันแล้ว ✅' : 'ยังไม่ยืนยัน ❌'}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <Label>อีเมล</Label>
-                  <Input
-                    value={user.email || ''}
-                    disabled
-                    className="bg-gray-50"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    สถานะ: {profile.email_verified ? 'ยืนยันแล้ว ✅' : 'ยังไม่ยืนยัน ❌'}
-                  </p>
-                </div>
-
-                {editMode && (
-                  <div className="flex space-x-2 pt-4 border-t">
-                    <Button 
-                      onClick={handleSaveProfile}
-                      disabled={isSaving}
-                      className="flex-1"
-                    >
-                      {isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                      บันทึก
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={handleCancelEdit}
-                      disabled={isSaving}
-                      className="flex-1"
-                    >
-                      ยกเลิก
-                    </Button>
+        {/* Combined Content Card: Personal Info | Verification | Auto-Bot */}
+        <div className="mb-6">
+          <Card className="shadow-sm border-0 bg-white">
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Column 1: Personal Info */}
+                <div className="p-4 rounded-lg border border-slate-100">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <User className="h-5 w-5" />
+                      <h3 className="text-lg font-semibold">ข้อมูลส่วนตัว</h3>
+                    </div>
+                    <Button size="sm" variant="outline" onClick={() => editMode ? handleCancelEdit() : setEditMode(true)}>{editMode ? 'ยกเลิก' : 'แก้ไข'}</Button>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
 
-          {/* Verification Status - Middle Column */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Shield className="h-5 w-5" />
-                  <span>สถานะการยืนยันตัวตน</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Phone Verification */}
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <Phone className="h-5 w-5 text-blue-500" />
+                  <div className="space-y-3">
                     <div>
-                      <p className="font-medium">เบอร์โทรศัพท์</p>
-                      <p className="text-sm text-gray-600">{profile.phone || 'ยังไม่ได้ระบุ'}</p>
+                      <Label className="text-sm">ชื่อ</Label>
+                      <Input value={editMode ? editData.first_name : (profile.first_name || '')} onChange={(e) => editMode && setEditData(prev => ({ ...prev, first_name: e.target.value }))} disabled={!editMode || isSaving} className="mt-2" />
+                    </div>
+
+                    <div>
+                      <Label className="text-sm">นามสกุล</Label>
+                      <Input value={editMode ? editData.last_name : (profile.last_name || '')} onChange={(e) => editMode && setEditData(prev => ({ ...prev, last_name: e.target.value }))} disabled={!editMode || isSaving} className="mt-2" />
+                    </div>
+
+                    <div>
+                      <Label className="text-sm">ชื่อผู้ใช้</Label>
+                      <Input value={editMode ? editData.username : (profile.username || '')} onChange={(e) => editMode && setEditData(prev => ({ ...prev, username: e.target.value }))} disabled={!editMode || isSaving} className="mt-2" />
+                    </div>
+
+                    <div>
+                      <Label className="text-sm">เบอร์โทรศัพท์</Label>
+                      <Input value={editMode ? editData.phone : (profile.phone || '')} onChange={(e) => editMode && setEditData(prev => ({ ...prev, phone: e.target.value }))} disabled={!editMode || isSaving} className="mt-2" />
+                      {profile.phone && <p className="text-xs text-slate-500 mt-1">สถานะ: {profile.phone_verified ? 'ยืนยันแล้ว ✅' : 'ยังไม่ยืนยัน ❌'}</p>}
+                    </div>
+
+                    <div>
+                      <Label className="text-sm">อีเมล</Label>
+                      <Input value={user.email || ''} disabled className="mt-2 bg-slate-50" />
+                      <p className="text-xs text-slate-500 mt-1">สถานะ: {profile.email_verified ? 'ยืนยันแล้ว ✅' : 'ยังไม่ยืนยัน ❌'}</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    {profile.phone_verified ? (
-                      <Badge variant="default" className="bg-green-100 text-green-800">
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        ยืนยันแล้ว
-                      </Badge>
-                    ) : (
-                      <>
-                        <Badge variant="destructive">
-                          <XCircle className="h-3 w-3 mr-1" />
-                          ยังไม่ยืนยัน
-                        </Badge>
-                        <Button 
-                          size="sm" 
-                          onClick={() => setOtpState(prev => ({ ...prev, isOpen: true, phone: profile.phone || '' }))}
-                        >
-                          ยืนยัน
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
 
-                {/* Email Verification */}
-                <EmailVerification
-                  email={user.email || ''}
-                  isVerified={profile.email_verified || false}
-                  onVerificationStatusChange={(verified) => {
-                    setProfile(prev => prev ? { ...prev, email_verified: verified } : null);
-                    // Also update the fetchProfile to refresh data
-                    if (verified) {
-                      fetchProfile();
-                    }
-                  }}
-                />
-
-                {/* Progress Bar */}
-                <div>
-                  <div className="flex justify-between text-sm text-gray-600 mb-2">
-                    <span>ความคืบหน้าการยืนยัน</span>
-                    <span>{Number(profile.phone_verified) + Number(profile.email_verified)}/2</span>
-                  </div>
-                  <Progress 
-                    value={(Number(profile.phone_verified) + Number(profile.email_verified)) * 50} 
-                    className="h-2"
-                  />
-                </div>
-
-                {!profile.can_use_autobot && (
-                  <Alert>
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      คุณต้องยืนยันทั้งเบอร์โทรศัพท์และอีเมลก่อนจึงจะสามารถใช้งาน Auto-Bot ได้
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* OTP Verification Modal */}
-            {otpState.isOpen && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>ยืนยันเบอร์โทรศัพท์ด้วย OTP</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="phone">เบอร์โทรศัพท์</Label>
-                    <Input
-                      id="phone"
-                      value={otpState.phone}
-                      onChange={(e) => setOtpState(prev => ({ ...prev, phone: e.target.value, error: null }))}
-                      placeholder="0812345678"
-                      disabled={otpState.isSending || otpState.isVerifying}
-                    />
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button 
-                      onClick={handleSendOTP}
-                      disabled={otpState.isSending || otpState.isVerifying}
-                      className="flex-1"
-                    >
-                      {otpState.isSending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                      ส่ง OTP
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={() => setOtpState(prev => ({ ...prev, isOpen: false, error: null }))}
-                      disabled={otpState.isSending || otpState.isVerifying}
-                    >
-                      ยกเลิก
-                    </Button>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="otp">รหัส OTP</Label>
-                    <Input
-                      id="otp"
-                      value={otpState.otp}
-                      onChange={(e) => setOtpState(prev => ({ ...prev, otp: e.target.value, error: null }))}
-                      placeholder="ใส่รหัส 6 หลัก"
-                      maxLength={6}
-                      disabled={otpState.isSending || otpState.isVerifying}
-                    />
-                  </div>
-
-                  <Button 
-                    onClick={handleVerifyOTP}
-                    disabled={otpState.isVerifying || otpState.isSending || !otpState.otp.trim()}
-                    className="w-full"
-                  >
-                    {otpState.isVerifying ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                    ยืนยัน OTP
-                  </Button>
-
-                  {otpState.error && (
-                    <Alert>
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertDescription>{otpState.error}</AlertDescription>
-                    </Alert>
+                  {editMode && (
+                    <div className="flex items-center gap-2 pt-3">
+                      <Button onClick={handleSaveProfile} className="flex-1">{isSaving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : 'บันทึก'}</Button>
+                      <Button variant="outline" onClick={handleCancelEdit} disabled={isSaving}>ยกเลิก</Button>
+                    </div>
                   )}
-                </CardContent>
-              </Card>
-            )}
-          </div>
+                </div>
 
-          {/* Auto-Bot Section - Right Column */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Bot className="h-5 w-5" />
-                  <span>SMS Auto-Bot</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {!profile.can_use_autobot ? (
-                  <Alert>
-                    <Shield className="h-4 w-4" />
-                    <AlertDescription>
-                      คุณต้องยืนยันเบอร์โทรศัพท์และอีเมลก่อนจึงจะสามารถใช้งาน Auto-Bot ได้
-                    </AlertDescription>
-                  </Alert>
-                ) : (
+                {/* Column 2: Verification */}
+                <div className="p-4 rounded-lg border border-slate-100">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Shield className="h-5 w-5" />
+                      <h3 className="text-lg font-semibold">สถานะการยืนยันตัวตน</h3>
+                    </div>
+                  </div>
+
                   <div className="space-y-4">
-                    {smsAccount.status === 'not-generated' && (
-                      <div className="text-center">
-                        <p className="text-gray-600 mb-4">คลิกปุ่มด้านล่างเพื่อสร้างบัญชี SMS ใหม่</p>
-                        <Button onClick={generateSMSAccountReal} size="lg">
-                          <Bot className="h-4 w-4 mr-2" />
-                          สร้างบัญชี SMS
-                        </Button>
-                      </div>
-                    )}
-
-                    {smsAccount.status === 'generating' && (
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-2">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span>กำลังสร้างบัญชี SMS...</span>
+                    <div className="flex items-center justify-between p-3 rounded-lg border bg-slate-50">
+                      <div className="flex items-center gap-3">
+                        <Phone className="h-5 w-5 text-blue-500" />
+                        <div>
+                          <p className="font-medium">เบอร์โทรศัพท์</p>
+                          <p className="text-sm text-slate-600">{profile.phone || 'ยังไม่ได้ระบุ'}</p>
                         </div>
-                        <Progress value={smsAccount.progress} />
-                        <p className="text-sm text-gray-600">{smsAccount.currentStep}</p>
                       </div>
+                      <div className="flex items-center gap-2">
+                        {profile.phone_verified ? (
+                          <Badge className="bg-green-100 text-green-800">ยืนยันแล้ว</Badge>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-red-50 text-red-700">ยังไม่ยืนยัน</Badge>
+                            <Button size="sm" onClick={() => setOtpState(prev => ({ ...prev, isOpen: true, phone: profile.phone || '' }))}>ยืนยัน</Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <EmailVerification email={user.email || ''} isVerified={profile.email_verified || false} onVerificationStatusChange={(verified) => { setProfile(prev => prev ? { ...prev, email_verified: verified } : null); if (verified) fetchProfile(); }} />
+
+                    <div>
+                      <div className="flex justify-between text-sm text-slate-600 mb-2">
+                        <span>ความคืบหน้าการยืนยัน</span>
+                        <span>{Number(profile.phone_verified) + Number(profile.email_verified)}/2</span>
+                      </div>
+                      <Progress value={(Number(profile.phone_verified) + Number(profile.email_verified)) * 50} className="h-2" />
+                    </div>
+
+                    {!profile.can_use_autobot && (
+                      <Alert>
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>คุณต้องยืนยันทั้งเบอร์โทรศัพท์และอีเมลก่อนจึงจะสามารถใช้งาน Auto-Bot ได้</AlertDescription>
+                      </Alert>
                     )}
+                  </div>
 
-                    {smsAccount.status === 'generated' && smsAccount.credentials && (
-                      <div className="space-y-4">
-                        <Alert>
-                          <CheckCircle className="h-4 w-4" />
-                          <AlertDescription>
-                            สร้างบัญชี SMS สำเร็จ! กรุณาเก็บข้อมูลนี้ไว้อย่างปลอดภัย
-                          </AlertDescription>
-                        </Alert>
-
+                  {otpState.isOpen && (
+                    <div className="mt-4">
+                      <div className="p-3 rounded-lg border bg-white">
+                        <h4 className="font-semibold mb-2">ยืนยันเบอร์โทรศัพท์ด้วย OTP</h4>
                         <div className="space-y-3">
                           <div>
-                            <Label>Email</Label>
-                            <div className="flex">
-                              <Input value={smsAccount.credentials.email} readOnly />
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                onClick={() => copyToClipboard(smsAccount.credentials!.email)}
-                              >
-                                <Copy className="h-3 w-3" />
-                              </Button>
-                            </div>
+                            <Label htmlFor="phone">เบอร์โทรศัพท์</Label>
+                            <Input id="phone" value={otpState.phone} onChange={(e) => setOtpState(prev => ({ ...prev, phone: e.target.value, error: null }))} placeholder="0812345678" disabled={otpState.isSending || otpState.isVerifying} />
+                          </div>
+
+                          <div className="flex gap-2">
+                            <Button onClick={handleSendOTP} disabled={otpState.isSending || otpState.isVerifying} className="flex-1">{otpState.isSending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : 'ส่ง OTP'}</Button>
+                            <Button variant="outline" onClick={() => setOtpState(prev => ({ ...prev, isOpen: false, error: null }))}>ยกเลิก</Button>
                           </div>
 
                           <div>
-                            <Label>Password</Label>
-                            <div className="flex">
-                              <Input 
-                                value={smsAccount.credentials.password} 
-                                type={showPassword ? 'text' : 'password'}
-                                readOnly 
-                              />
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                onClick={() => setShowPassword(!showPassword)}
-                              >
-                                {showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                              </Button>
-                              <Button 
-                                variant="outline" 
-                                size="sm" 
-                                onClick={() => copyToClipboard(smsAccount.credentials!.password)}
-                              >
-                                <Copy className="h-3 w-3" />
-                              </Button>
-                            </div>
+                            <Label htmlFor="otp">รหัส OTP</Label>
+                            <Input id="otp" value={otpState.otp} onChange={(e) => setOtpState(prev => ({ ...prev, otp: e.target.value, error: null }))} placeholder="ใส่รหัส 6 หลัก" maxLength={6} disabled={otpState.isSending || otpState.isVerifying} />
                           </div>
+
+                          <Button onClick={handleVerifyOTP} disabled={otpState.isVerifying || otpState.isSending || !otpState.otp.trim()} className="w-full">{otpState.isVerifying ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : 'ยืนยัน OTP'}</Button>
+
+                          {otpState.error && (
+                            <Alert>
+                              <AlertCircle className="h-4 w-4" />
+                              <AlertDescription>{otpState.error}</AlertDescription>
+                            </Alert>
+                          )}
                         </div>
-
-                        <Button 
-                          onClick={() => setSmsAccount({ status: 'not-generated' })}
-                          variant="outline" 
-                          className="w-full"
-                        >
-                          สร้างบัญชีใหม่
-                        </Button>
                       </div>
-                    )}
+                    </div>
+                  )}
+                </div>
 
-                    {smsAccount.status === 'error' && (
+                {/* Column 3: Auto-Bot */}
+                <div className="p-4 rounded-lg border border-slate-100">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Bot className="h-5 w-5" />
+                      <h3 className="text-lg font-semibold">SMS Auto-Bot</h3>
+                    </div>
+                  </div>
+
+                  <div>
+                    {!profile.can_use_autobot ? (
+                      <Alert>
+                        <Shield className="h-4 w-4" />
+                        <AlertDescription>คุณต้องยืนยันเบอร์โทรศัพท์และอีเมลก่อนจึงจะสามารถใช้งาน Auto-Bot ได้</AlertDescription>
+                      </Alert>
+                    ) : (
                       <div className="space-y-4">
-                        <Alert>
-                          <AlertCircle className="h-4 w-4" />
-                          <AlertDescription>
-                            เกิดข้อผิดพลาด: {smsAccount.error}
-                          </AlertDescription>
-                        </Alert>
-                        <Button 
-                          onClick={() => setSmsAccount({ status: 'not-generated' })}
-                          variant="outline" 
-                          className="w-full"
-                        >
-                          ลองใหม่
-                        </Button>
+                        {smsAccount.status === 'not-generated' && (
+                          <div className="text-center">
+                            <p className="text-sm text-slate-600 mb-4">คลิกปุ่มด้านล่างเพื่อสร้างบัญชี SMS ใหม่</p>
+                            <Button onClick={generateSMSAccountReal} size="lg" className="w-full">
+                              <Bot className="h-4 w-4 mr-2" /> สร้างบัญชี SMS
+                            </Button>
+                          </div>
+                        )}
+
+                        {smsAccount.status === 'generating' && (
+                          <div className="space-y-3">
+                            <div className="flex items-center space-x-2">
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span>กำลังสร้างบัญชี SMS...</span>
+                            </div>
+                            <Progress value={smsAccount.progress} className="h-2" />
+                            <p className="text-sm text-slate-600">{smsAccount.currentStep}</p>
+                          </div>
+                        )}
+
+                        {smsAccount.status === 'generated' && smsAccount.credentials && (
+                          <div className="space-y-3">
+                            <Alert>
+                              <CheckCircle className="h-4 w-4" />
+                              <AlertDescription>สร้างบัญชี SMS สำเร็จ! เก็บข้อมูลไว้ปลอดภัย</AlertDescription>
+                            </Alert>
+
+                            <div className="space-y-2">
+                              <div>
+                                <Label>Email</Label>
+                                <div className="flex gap-2 mt-2">
+                                  <Input value={smsAccount.credentials.email} readOnly />
+                                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(smsAccount.credentials!.email)}><Copy className="h-3 w-3" /></Button>
+                                </div>
+                              </div>
+
+                              <div>
+                                <Label>Password</Label>
+                                <div className="flex gap-2 mt-2">
+                                  <Input value={smsAccount.credentials.password} type={showPassword ? 'text' : 'password'} readOnly />
+                                  <Button variant="outline" size="sm" onClick={() => setShowPassword(!showPassword)}>{showPassword ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}</Button>
+                                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(smsAccount.credentials!.password)}><Copy className="h-3 w-3" /></Button>
+                                </div>
+                              </div>
+                            </div>
+
+                            <Button variant="outline" className="w-full" onClick={() => setSmsAccount({ status: 'not-generated' })}>สร้างบัญชีใหม่</Button>
+                          </div>
+                        )}
+
+                        {smsAccount.status === 'error' && (
+                          <div className="space-y-3">
+                            <Alert>
+                              <AlertCircle className="h-4 w-4" />
+                              <AlertDescription>เกิดข้อผิดพลาด: {smsAccount.error}</AlertDescription>
+                            </Alert>
+                            <Button variant="outline" className="w-full" onClick={() => setSmsAccount({ status: 'not-generated' })}>ลองใหม่</Button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 

@@ -49,12 +49,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signIn = useCallback(async (email: string, password: string) => {
     setLoading(true);
+    // Mask email for logs (show first char and domain only)
+    const maskedEmail = (() => {
+      try {
+        const [local, domain] = email.split('@');
+        return `${local?.[0] ?? '*'}***@${domain ?? '***'}`;
+      } catch {
+        return '***@***';
+      }
+    })();
+
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
+      // Normalize email to reduce accidental mismatches from casing/whitespace
+      const normalizedEmail = email.trim().toLowerCase();
+      console.debug('[auth] signIn request', { email: maskedEmail, normalizedEmail });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
         password,
       });
-      
+
+      if (error) {
+        // Log structured error details to help differentiate client environments
+        console.error('[auth] Sign in error', {
+          email: maskedEmail,
+          message: error.message,
+          status: (error as any)?.status ?? null,
+          name: error.name,
+        });
+      } else {
+        console.debug('[auth] Sign in success', { email: maskedEmail, session: data?.session ?? null });
+      }
+
       return { error };
     } finally {
       setLoading(false);

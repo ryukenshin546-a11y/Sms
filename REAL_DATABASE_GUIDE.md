@@ -25,7 +25,7 @@ Edit `.env` file:
 ```properties
 # Real Supabase Configuration
 VITE_SUPABASE_URL=https://your-project-ref.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...your-real-key
+SUPABASE_CLIENT_API_KEYY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...your-real-key
 VITE_SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...your-real-service-key
 ```
 
@@ -105,7 +105,7 @@ const supabaseAnonKey = 'your-real-anon-key-here';
 ```javascript
 // Better approach - use environment variables
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
+const supabaseAnonKey = process.env.SUPABASE_CLIENT_API_KEYY;
 ```
 
 ---
