@@ -1,9 +1,9 @@
-// Auto-Bot API Server
-// Express server สำหรับเรียกใช้ Puppeteer Auto-Bot Script
+// Auto-Bot API Server  
+// Express server สำหรับเรียกใช้ runAutoBotWithDB.js
 
 import express from 'express';
-import { spawn } from 'child_process';
 import cors from 'cors';
+import { spawn } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -19,11 +19,19 @@ app.use(express.json());
 // API endpoint สำหรับรัน Auto-Bot
 app.post('/api/auto-bot/generate', (req, res) => {
   console.log('🚀 API: รับคำขอ Auto-Bot generation');
+  console.log('📝 Script ใหม่จะดึงข้อมูลจาก Database โดยตรง');
   
-  const autoBotProcess = spawn('node', ['scripts/runAutoBot.js'], {
+  // เรียก script ใหม่
+  const scriptPath = path.join(__dirname, '..', 'scripts', 'runAutoBotWithDB.js');
+  
+  console.log('📋 Script path:', scriptPath);
+  
+  const autoBotProcess = spawn('node', [scriptPath], {
     cwd: path.join(__dirname, '..'),
     stdio: 'pipe'
   });
+  
+  console.log('🚀 Process spawned successfully');
   
   let outputData = '';
   let errorData = '';
@@ -47,7 +55,6 @@ app.post('/api/auto-bot/generate', (req, res) => {
     console.log(`🏁 Auto-Bot Process จบด้วย exit code: ${code}`);
     
     if (code === 0) {
-      // Parse ข้อมูลจาก output
       try {
         // หาข้อมูล Account ที่สร้างจาก output
         const accountMatch = outputData.match(/Account Name: (.*?)[\r\n]/);
@@ -100,11 +107,6 @@ app.post('/api/auto-bot/generate', (req, res) => {
       error: `Process Error: ${error.message}`
     });
   });
-});
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Auto-Bot API Server is running' });
 });
 
 app.listen(port, () => {

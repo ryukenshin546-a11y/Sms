@@ -11,9 +11,10 @@ export interface GeneratedAccount {
 
 // SMS Bot Service - Main Export Function
 export const generateSMSAccount = async (
-  onProgress?: (step: string, progress: number) => void
+  onProgress?: (step: string, progress: number) => void,
+  userData?: { username: string; email: string }
 ): Promise<GeneratedAccount> => {
-  const result = await runAutoBotGeneration(onProgress);
+  const result = await runAutoBotGeneration(onProgress, userData);
   
   if (!result.success || !result.data) {
     throw new Error(result.error || 'Auto-Bot generation failed');

@@ -1,7 +1,6 @@
-// 🚀 Auto-Bot Script สำหรับสร้าง SMS Sub Account ด้วยข้อมูลจริง
-// ✅ รองรับการใส่ username และ email จริง แต่ password เจนอัตโนมัติ
-// รันคำสั่ง: node scripts/runAutoBot.js <username> <email>
-// ตัวอย่าง: node scripts/runAutoBot.js myuser myuser@gmail.com
+// 🚀 Auto-Bot Script สำหรับสร้าง SMS Sub Account ด้วยข้อมูลจาก Database
+// ✅ รองรับการใส่ username และ email จาก Supabase Database
+// รันคำสั่ง: node scripts/runAutoBotWithDB.js
 
 import puppeteer from 'puppeteer';
 import readline from 'readline';
@@ -46,43 +45,142 @@ const generateSecurePassword = () => {
   return password.split('').sort(() => Math.random() - 0.5).join('');
 };
 
-// ✅ ฟังก์ชันสำหรับเลือกข้อมูลผู้ใช้ (เรียก API หรือใช้สุ่ม)
-const getUserData = async () => {
-  console.log('🔍 เริ่มตรวจสอบข้อมูลผู้ใช้...');
+// ✅ ฟังก์ชันสำหรับดึงข้อมูลผู้ใช้จาก Supabase Database
+const getUserDataFromDatabase = async () => {
+  console.log('🔍 เชื่อมต่อ Supabase Database...');
   
   try {
-    // เรียก API เพื่อขอข้อมูลผู้ใช้
-    console.log('📞 เรียก API เพื่อขอข้อมูลผู้ใช้...');
-    const response = await fetch('http://localhost:3001/api/auto-bot/user-data');
-    const result = await response.json();
+    // สร้าง Supabase client
+    const supabaseUrl = process.env.VITE_SUPABASE_URL;
+    const supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_KEY;
     
-    console.log('� ได้รับข้อมูลจาก API:', result);
+    if (!supabaseUrl || !supabaseServiceKey) {
+      console.log('❌ ไม่มี Supabase credentials ใน .env file');
+      console.log('📝 กรุณาตรวจสอบไฟล์ .env มีค่าดังนี้:');
+      console.log('   VITE_SUPABASE_URL=https://mnhdueclyzwtfkmwttkc.supabase.co');
+      console.log('   VITE_SUPABASE_SERVICE_KEY=sb_secret_...');
+      throw new Error('Missing Supabase credentials');
+    }
     
-    if (result.success && result.data && result.data.username && result.data.email) {
-      console.log('🔄 ใช้ข้อมูลผู้ใช้จริงจาก API สำหรับการสร้าง SMS Account');
+    console.log('📡 Supabase URL:', supabaseUrl);
+    console.log('🔑 Service Key:', supabaseServiceKey.substring(0, 20) + '...');
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    console.log('✅ เชื่อมต่อ Supabase สำเร็จ');
+    
+    // ดึงข้อมูลผู้ใช้ที่ล็อกอินล่าสุด พร้อม email จาก auth.users
+    console.log('🔍 ค้นหาข้อมูลผู้ใช้จาก user_profiles table พร้อม JOIN auth.users...');
+    
+    // ใช้ RPC function หรือ view ถ้ามี หรือใช้ข้อมูลจาก user_profiles อย่างเดียว
+    const { data: profiles, error } = await supabase
+      .from('user_profiles')
+      .select(`
+        username, 
+        first_name, 
+        last_name, 
+        id, 
+        updated_at, 
+        email_verified, 
+        phone_verified, 
+        can_use_autobot
+      `)
+      .eq('email_verified', true) // เฉพาะที่ verify email แล้ว
+      .eq('phone_verified', true) // เฉพาะที่ verify phone แล้ว  
+      .eq('can_use_autobot', true) // เฉพาะที่สามารถใช้ autobot ได้
+      .order('updated_at', { ascending: false }) // เรียงตาม updated_at ล่าสุด
+      .limit(1); // เอาแค่ 1 record
+    
+    if (error) {
+      console.error('❌ Database error:', error.message);
+      console.log('💡 ลองตรวจสอบว่า user_profiles table มีอยู่ใน database หรือไม่');
+      throw error;
+    }
+    
+    if (!profiles || profiles.length === 0) {
+      console.log('⚠️ ไม่พบข้อมูลผู้ใช้ที่ verified ทั้งคู่ ใน database');
+      console.log('💡 ลองเปลี่ยนเงื่อนไขเป็น ไม่ต้อง verify ทั้งคู่');
+      
+      // ลองหาผู้ใช้ทั่วไปที่ไม่ต้อง verify ทั้งคู่
+      const { data: allProfiles, error: allError } = await supabase
+        .from('user_profiles')
+        .select(`
+          username, 
+          first_name, 
+          last_name, 
+          id, 
+          updated_at, 
+          email_verified, 
+          phone_verified, 
+          can_use_autobot
+        `)
+        .order('updated_at', { ascending: false })
+        .limit(1);
+        
+      if (allError || !allProfiles || allProfiles.length === 0) {
+        throw new Error('No user found in user_profiles table');
+      }
+      
+      console.log('✅ พบผู้ใช้ (บางอันยังไม่ verify):', allProfiles[0]);
+      const user = allProfiles[0];
+      
+      // ดึง email จริงจาก auth.users
+      const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(user.id);
+      const userEmail = authUser?.user?.email || `${user.username || user.first_name}@gmail.com`;
+      
+      // ใช้ username หรือสร้างจาก first_name
+      const finalUsername = user.username || `${user.first_name}_${user.id.substring(0, 8)}`;
+      
+      console.log('🔄 ใช้ข้อมูลผู้ใช้จาก Database สำหรับการสร้าง SMS Account');
       return {
-        accountName: result.data.username,
-        username: result.data.username,
-        email: result.data.email,
+        accountName: finalUsername,
+        username: finalUsername,
+        email: userEmail,
         password: generateSecurePassword(),
         confirmPassword: function() { return this.password; }
       };
-    } else {
-      console.log('⚠️ API ไม่มีข้อมูลผู้ใช้หรือข้อมูลไม่ครบถ้วน');
     }
-  } catch (error) {
-    console.error('❌ เรียก API ล้มเหลว:', error.message);
+    
+    const user = profiles[0];
+    
+    // ดึง email จริงจาก auth.users  
+    const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(user.id);
+    const userEmail = authUser?.user?.email || `${user.username || user.first_name}@gmail.com`;
+    
+    console.log('✅ พบข้อมูลผู้ใช้ที่ verified ทั้งคู่:', {
+      id: user.id,
+      username: user.username,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: userEmail,
+      email_verified: user.email_verified,
+      phone_verified: user.phone_verified,
+      can_use_autobot: user.can_use_autobot,
+      updated_at: user.updated_at
+    });
+    
+    // ใช้ username หรือสร้างจาก first_name
+    const finalUsername = user.username || `${user.first_name}_${user.id.substring(0, 8)}`;
+    
+    console.log('🔄 ใช้ข้อมูลผู้ใช้จริงจาก Database สำหรับการสร้าง SMS Account');
+    return {
+      accountName: finalUsername,
+      username: finalUsername,
+      email: userEmail,
+      password: generateSecurePassword(),
+      confirmPassword: function() { return this.password; }
+    };  } catch (error) {
+    console.error('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ Database:', error.message);
+    
+    // Fallback: ใช้ข้อมูลสุ่มเหมือนเดิม
+    console.log('🎲 ใช้ข้อมูลทดสอบแบบสุ่ม (fallback)');
+    return {
+      accountName: 'test' + Math.floor(Math.random() * 1000),
+      username: 'test' + Math.floor(Math.random() * 1000),
+      email: 'test' + Math.floor(Math.random() * 1000) + '@gmail.com',
+      password: generateSecurePassword(),
+      confirmPassword: function() { return this.password; }
+    };
   }
-  
-  // Fallback: ใช้ข้อมูลสุ่มเหมือนเดิม
-  console.log('🎲 ใช้ข้อมูลทดสอบแบบสุ่ม (fallback)');
-  return {
-    accountName: 'test' + Math.floor(Math.random() * 1000),
-    username: 'test' + Math.floor(Math.random() * 1000),
-    email: 'test' + Math.floor(Math.random() * 1000) + '@gmail.com',
-    password: generateSecurePassword(),
-    confirmPassword: function() { return this.password; }
-  };
 };
 
 // ✅ ใช้ admin credentials เดียวกันกับ original
@@ -200,14 +298,14 @@ async function runAutoBot() {
       });
     }
     
-    // ✅ 7. กรอกข้อมูลในฟอร์ม Sub Account - เหมือน original
+    // ✅ 7. กรอกข้อมูลในฟอร์ม Sub Account - ใช้ข้อมูลจาก Database
     console.log('🤖 รอฟอร์มปรากฏและกรอกข้อมูล...');
     await page.waitForSelector('input[placeholder="Account name"]', { timeout: botConfig.timeout });
     
-    // ✅ ใช้ข้อมูลผู้ใช้จริงหรือสุ่ม
-    const userData = await getUserData();
+    // ✅ ดึงข้อมูลผู้ใช้จาก Database
+    const userData = await getUserDataFromDatabase();
     
-    console.log(`🤖 กรอกข้อมูลตามที่กำหนด:`);
+    console.log(`🤖 กรอกข้อมูลจาก Database:`);
     console.log(`   - Account Name: ${userData.accountName}`);
     console.log(`   - Username: ${userData.username}`);
     console.log(`   - Email: ${userData.email}`);
@@ -274,8 +372,8 @@ async function runAutoBot() {
       await page.waitForSelector(confirmPasswordSelector);
       await page.focus(confirmPasswordSelector);
       await page.click(confirmPasswordSelector, { clickCount: 3 });
-      await page.type(confirmPasswordSelector, userData.password, { delay: 10 }); // ✅ เร็วขึ้น
-      console.log('✅ กรอก Confirm Password:', userData.password);
+      await page.type(confirmPasswordSelector, userData.confirmPassword(), { delay: 10 }); // ✅ เร็วขึ้น
+      console.log('✅ กรอก Confirm Password:', userData.confirmPassword());
     } catch (error) {
       console.error('❌ กรอก Confirm Password ล้มเหลว:', error.message);
     }
@@ -678,16 +776,26 @@ async function runAutoBot() {
     // รอสักครู่ให้ดูผลลัพธ์สุดท้าย
     await new Promise(resolve => setTimeout(resolve, 1500)); // ✅ ลดจาก 3000ms เหลือ 1500ms
     
+    // ✅ 18. แสดงผลลัพธ์สุดท้าย
+    console.log('\n🎉 สร้าง SMS Sub Account สำเร็จ!');
+    console.log('=' * 50);
+    console.log(`Account Name: ${userData.accountName}`);
+    console.log(`Username: ${userData.username}`);
+    console.log(`Email: ${userData.email}`);
+    console.log(`Password: ${userData.password}`);
+    console.log('=' * 50);
+    
   } catch (error) {
-    console.error('🚫 Auto-Bot ล้มเหลว:', error);
+    console.error('❌ เกิดข้อผิดพลาด:', error.message);
+    process.exit(1);
   } finally {
-    // ปิดเบราว์เซอร์
+    // ✅ 11. ปิดเบราว์เซอร์
     if (browser) {
       await browser.close();
-      console.log('🤖 ปิดเบราว์เซอร์เรียบร้อย');
+      console.log('🤖 ปิดเบราว์เซอร์แล้ว');
     }
   }
 }
 
-// รัน Auto-Bot
+// ✅ รันโปรแกรม
 runAutoBot().catch(console.error);

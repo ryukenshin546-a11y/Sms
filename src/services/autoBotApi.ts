@@ -14,7 +14,8 @@ export interface AutoBotResponse {
 
 // เรียก Auto-Bot Generation API
 export const runAutoBotGeneration = async (
-  onProgress?: (step: string, progress: number) => void
+  onProgress?: (step: string, progress: number) => void,
+  userData?: { username: string; email: string }
 ): Promise<AutoBotResponse> => {
   try {
     // Update progress: เริ่มต้นกระบวนการ
@@ -25,8 +26,13 @@ export const runAutoBotGeneration = async (
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({})
+      body: JSON.stringify({
+        userData: userData || null
+      })
     });
+
+    console.log('📤 Frontend: ส่งข้อมูลไปยัง API Server');
+    console.log('📤 userData ที่ส่ง:', userData);
 
     // Update progress: เชื่อมต่อ API สำเร็จ
     if (onProgress) onProgress('เชื่อมต่อ API Server สำเร็จ, กำลังรัน Auto-Bot...', 20);

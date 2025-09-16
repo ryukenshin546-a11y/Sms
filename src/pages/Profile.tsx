@@ -46,6 +46,7 @@ const Profile = () => {
     });
 
     try {
+      // ส่งข้อมูลผู้ใช้จริงไปกับ API call
       const credentials = await generateSMSAccount(
         (step: string, progress: number) => {
           setSmsAccount(prev => ({
@@ -53,6 +54,10 @@ const Profile = () => {
             progress,
             currentStep: step
           }));
+        },
+        {
+          username: 'user_' + Math.floor(Math.random() * 10000), // ใช้ภาษาอังกฤษเพื่อความปลอดภัย
+          email: userData.email,
         }
       );
 
