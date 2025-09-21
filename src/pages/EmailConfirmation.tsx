@@ -56,6 +56,25 @@ const EmailConfirmation = () => {
             setMessage('ยินดีต้อนรับ! อีเมลได้รับการยืนยันเรียบร้อยแล้ว');
             setStatus('success');
 
+            // Update user_profiles table with email verification status
+            try {
+              const { error: updateError } = await (supabase as any)
+                .from('user_profiles')
+                .update({ 
+                  email_verified: true,
+                  updated_at: new Date().toISOString()
+                })
+                .eq('user_id', session.user.id);
+
+              if (updateError) {
+                console.error('⚠️ Failed to update email_verified in user_profiles:', updateError);
+              } else {
+                console.log('✅ user_profiles updated: email_verified = true');
+              }
+            } catch (profileUpdateError) {
+              console.error('⚠️ Profile update error:', profileUpdateError);
+            }
+
             // Redirect to profile since user is now authenticated
             setTimeout(() => {
               navigate('/profile', { replace: true });
@@ -89,6 +108,25 @@ const EmailConfirmation = () => {
             setUserEmail(authData.user.email || '');
             setMessage('อีเมลได้รับการยืนยันเรียบร้อย กรุณาเข้าสู่ระบบ');
             setStatus('success');
+
+            // Update user_profiles table with email verification status
+            try {
+              const { error: updateError } = await (supabase as any)
+                .from('user_profiles')
+                .update({ 
+                  email_verified: true,
+                  updated_at: new Date().toISOString()
+                })
+                .eq('user_id', authData.user.id);
+
+              if (updateError) {
+                console.error('⚠️ Failed to update email_verified in user_profiles:', updateError);
+              } else {
+                console.log('✅ user_profiles updated: email_verified = true');
+              }
+            } catch (profileUpdateError) {
+              console.error('⚠️ Profile update error:', profileUpdateError);
+            }
 
             setTimeout(() => {
               navigate('/login', { 

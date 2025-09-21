@@ -38,10 +38,10 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
   const location = useLocation();
 
   useEffect(() => {
-    if (user && !loading) {
+    if (user?.id && !loading) {
       fetchVerificationStatus();
     }
-  }, [user, loading]);
+  }, [user?.id, loading]); // Use user.id instead of entire user object
 
   const fetchVerificationStatus = async () => {
     if (!user) return;
@@ -52,7 +52,7 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
       const { data: profileData, error: profileError } = await (supabase as any)
         .from('user_profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .maybeSingle();
 
       if (profileError) {
@@ -158,7 +158,7 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
       const { error } = await (supabase as any)
         .from('user_profiles')
         .update({ email_verified: verified })
-        .eq('id', user.id);
+        .eq('user_id', user.id);
 
       if (error) throw error;
       

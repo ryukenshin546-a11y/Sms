@@ -170,7 +170,7 @@ export const useEmailVerification = () => {
             email_verified_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           })
-          .eq('id', data.user.id);
+          .eq('user_id', data.user.id);
 
         if (updateError) {
           console.error('⚠️ Profile update error:', updateError);
@@ -203,7 +203,7 @@ export const useEmailVerification = () => {
       const { data: profile } = await supabase
         .from('profiles')
         .select('email_verified')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .maybeSingle();
 
       return {

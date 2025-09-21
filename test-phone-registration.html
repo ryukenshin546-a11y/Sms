@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Phone Registration</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; padding: 15px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Phone Number Registration</h1>
+    
+    <div class="form-group">
+        <label for="firstName">ชื่อ:</label>
+        <input type="text" id="firstName" value="ทดสอบ">
+    </div>
+    
+    <div class="form-group">
+        <label for="lastName">นามสกุล:</label>
+        <input type="text" id="lastName" value="เบอร์โทร">
+    </div>
+    
+    <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" value="phonetest123">
+    </div>
+    
+    <div class="form-group">
+        <label for="email">อีเมล:</label>
+        <input type="email" id="email" value="">
+    </div>
+    
+    <div class="form-group">
+        <label for="phone">เบอร์โทรศัพท์:</label>
+        <input type="text" id="phone" value="0801234567">
+    </div>
+    
+    <div class="form-group">
+        <label for="password">รหัสผ่าน:</label>
+        <input type="password" id="password" value="testpassword123">
+    </div>
+    
+    <button onclick="testRegistration()">ทดสอบการสมัครสมาชิก</button>
+    <button onclick="checkLastUser()">ตรวจสอบผู้ใช้ล่าสุด</button>
+    
+    <div id="result"></div>
+
+    <script>
+        // Initialize Supabase
+        const supabase = window.supabase.createClient(
+            'https://mnhdueclyzwtfkmwttkc.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uaGR1ZWNseXp3dGZrbXd0dGtjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUxMTQzNjUsImV4cCI6MjA0MDY5MDM2NX0.L7_dCGmPBWJX6vGNdNL4j3xCxJvRvOlKj1LFO-9nBH8'
+        );
+
+        async function testRegistration() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="info">กำลังทดสอบ...</div>';
+            
+            try {
+                // Generate unique email
+                const timestamp = Date.now();
+                const email = `phonetest${timestamp}@example.com`;
+                document.getElementById('email').value = email;
+                
+                const formData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    username: document.getElementById('username').value + timestamp,
+                    email: email,
+                    phone: document.getElementById('phone').value,
+                    password: document.getElementById('password').value
+                };
+                
+                console.log('📝 Registration data:', formData);
+                
+                // Test registration
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: formData.email,
+                    password: formData.password,
+                    options: {
+                        data: {
+                            first_name: formData.firstName,
+                            last_name: formData.lastName,
+                            username: formData.username,
+                            phone: formData.phone,  // ⭐ ส่ง phone ไป
+                            account_type: 'personal'
+                        }
+                    }
+                });
+
+                if (authError) {
+                    throw authError;
+                }
+                
+                console.log('✅ Registration successful:', authData);
+                
+                // Wait a bit for trigger to process
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Check if profile was created with phone
+                const { data: profile, error: profileError } = await supabase
+                    .from('user_profiles')
+                    .select('*')
+                    .eq('user_id', authData.user.id)
+                    .single();
+                
+                if (profileError) {
+                    console.error('Profile check error:', profileError);
+                }
+                
+                const hasPhone = profile?.phone && profile.phone.trim() !== '';
+                
+                resultDiv.innerHTML = `
+                    <div class="${hasPhone ? 'success' : 'error'}">
+                        <h3>${hasPhone ? '✅ สำเร็จ!' : '❌ เบอร์โทรไม่ถูกบันทึก'}</h3>
+                        <p><strong>User ID:</strong> ${authData.user.id}</p>
+                        <p><strong>Email:</strong> ${profile?.email}</p>
+                        <p><strong>ชื่อ:</strong> ${profile?.first_name}</p>
+                        <p><strong>นามสกุล:</strong> ${profile?.last_name}</p>
+                        <p><strong>Username:</strong> ${profile?.username}</p>
+                        <p><strong>เบอร์โทร:</strong> ${profile?.phone || 'ไม่มีข้อมูล'}</p>
+                        <p><strong>Account Type:</strong> ${profile?.account_type}</p>
+                        <hr>
+                        <p><strong>Raw metadata:</strong></p>
+                        <pre>${JSON.stringify(authData.user.user_metadata, null, 2)}</pre>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Registration failed:', error);
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ เกิดข้อผิดพลาด</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function checkLastUser() {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const { data: profiles, error } = await supabase
+                    .from('user_profiles')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+                
+                if (error) throw error;
+                
+                if (profiles && profiles.length > 0) {
+                    const profile = profiles[0];
+                    const hasPhone = profile.phone && profile.phone.trim() !== '';
+                    
+                    resultDiv.innerHTML = `
+                        <div class="${hasPhone ? 'success' : 'error'}">
+                            <h3>ผู้ใช้ล่าสุด</h3>
+                            <p><strong>ID:</strong> ${profile.id}</p>
+                            <p><strong>User ID:</strong> ${profile.user_id}</p>
+                            <p><strong>Email:</strong> ${profile.email}</p>
+                            <p><strong>ชื่อ:</strong> ${profile.first_name}</p>
+                            <p><strong>นามสกุล:</strong> ${profile.last_name}</p>
+                            <p><strong>Username:</strong> ${profile.username}</p>
+                            <p><strong>เบอร์โทร:</strong> ${profile.phone || 'ไม่มีข้อมูล'}</p>
+                            <p><strong>Account Type:</strong> ${profile.account_type}</p>
+                            <p><strong>วันที่สร้าง:</strong> ${new Date(profile.created_at).toLocaleString('th-TH')}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = '<div class="info">ไม่พบข้อมูลผู้ใช้</div>';
+                }
+                
+            } catch (error) {
+                console.error('Check user failed:', error);
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ เกิดข้อผิดพลาด</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐛 Debug Email Confirmation</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background: #f5f7fa;
+        }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #2d3748; margin-bottom: 30px; }
+        .section { margin-bottom: 25px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px; }
+        .section h3 { color: #4a5568; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #2d3748; }
+        input, textarea { 
+            width: 100%; 
+            padding: 10px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 6px; 
+            font-size: 14px;
+        }
+        input:focus, textarea:focus { 
+            outline: none; 
+            border-color: #3182ce; 
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+        button { 
+            background: #3182ce; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover { background: #2c5aa0; }
+        .success { background: #f0fff4; color: #22543d; border: 1px solid #9ae6b4; }
+        .error { background: #fed7d7; color: #742a2a; border: 1px solid #fc8181; }
+        .warning { background: #fefcbf; color: #744210; border: 1px solid #f6e05e; }
+        .info { background: #ebf8ff; color: #2a4365; border: 1px solid #90cdf4; }
+        .result { margin-top: 20px; padding: 15px; border-radius: 6px; }
+        pre { background: #f7fafc; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 12px; }
+        .url-info { background: #edf2f7; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+        .step { background: #f7fafc; padding: 15px; margin: 10px 0; border-left: 4px solid #3182ce; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐛 Email Confirmation Debug Tool</h1>
+        
+        <!-- Current URL Analysis -->
+        <div class="section">
+            <h3>📍 Current URL Analysis</h3>
+            <div class="url-info">
+                <strong>Full URL:</strong> <span id="fullUrl"></span><br>
+                <strong>Origin:</strong> <span id="origin"></span><br>
+                <strong>Hash:</strong> <span id="hash"></span><br>
+                <strong>Search:</strong> <span id="search"></span>
+            </div>
+            <button onclick="analyzeCurrentUrl()">🔍 Analyze Current URL</button>
+        </div>
+
+        <!-- Manual URL Testing -->
+        <div class="section">
+            <h3>🔗 Test Manual URL</h3>
+            <div class="form-group">
+                <label for="testUrl">Paste confirmation URL here:</label>
+                <input type="text" id="testUrl" placeholder="https://localhost:3000/auth/confirm#access_token=...">
+            </div>
+            <button onclick="testManualUrl()">🧪 Test URL</button>
+        </div>
+
+        <!-- Registration Test -->
+        <div class="section">
+            <h3>📧 Test Registration Flow</h3>
+            <div class="form-group">
+                <label for="testEmail">Test Email:</label>
+                <input type="email" id="testEmail" value="test-email-confirm@example.com">
+            </div>
+            <button onclick="testRegistration()">🚀 Register & Get Email Link</button>
+        </div>
+
+        <!-- Supabase Auth Status -->
+        <div class="section">
+            <h3>🔐 Supabase Auth Status</h3>
+            <button onclick="checkAuthStatus()">📊 Check Current Session</button>
+            <button onclick="clearSession()">🗑️ Clear Session</button>
+        </div>
+
+        <!-- Results -->
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Initialize Supabase
+        const supabase = window.supabase.createClient(
+            'https://mnhdueclyzwtfkmwttkc.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uaGR1ZWNseXp3dGZrbXd0dGtjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUxMTQzNjUsImV4cCI6MjA0MDY5MDM2NX0.L7_dCGmPBWJX6vGNdNL4j3xCxJvRvOlKj1LFO-9nBH8'
+        );
+
+        function analyzeCurrentUrl() {
+            const resultDiv = document.getElementById('result');
+            
+            // Update URL display
+            document.getElementById('fullUrl').textContent = window.location.href;
+            document.getElementById('origin').textContent = window.location.origin;
+            document.getElementById('hash').textContent = window.location.hash || '(none)';
+            document.getElementById('search').textContent = window.location.search || '(none)';
+            
+            const analysis = [];
+            
+            // Check for hash params (magic link)
+            if (window.location.hash) {
+                const hashParams = new URLSearchParams(window.location.hash.substring(1));
+                analysis.push(`
+                    <div class="step">
+                        <strong>🔑 Hash Parameters Found:</strong><br>
+                        <pre>${JSON.stringify(Object.fromEntries(hashParams), null, 2)}</pre>
+                        ${hashParams.get('access_token') ? '✅ Access token present' : '❌ No access token'}
+                        ${hashParams.get('error') ? `❌ Error: ${hashParams.get('error')}` : '✅ No error in hash'}
+                        ${hashParams.get('error_description') ? `📝 Error description: ${decodeURIComponent(hashParams.get('error_description'))}` : ''}
+                    </div>
+                `);
+            }
+            
+            // Check for query params (traditional)
+            if (window.location.search) {
+                const urlParams = new URLSearchParams(window.location.search);
+                analysis.push(`
+                    <div class="step">
+                        <strong>🔍 Query Parameters Found:</strong><br>
+                        <pre>${JSON.stringify(Object.fromEntries(urlParams), null, 2)}</pre>
+                        ${urlParams.get('token') ? '✅ Token present' : '❌ No token'}
+                        ${urlParams.get('type') ? `✅ Type: ${urlParams.get('type')}` : '❌ No type'}
+                    </div>
+                `);
+            }
+            
+            if (!window.location.hash && !window.location.search) {
+                analysis.push(`
+                    <div class="step">
+                        <strong>⚠️ No confirmation parameters found</strong><br>
+                        This looks like a regular page visit, not an email confirmation link.
+                    </div>
+                `);
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="result info">
+                    <h3>📊 URL Analysis Results</h3>
+                    ${analysis.join('')}
+                </div>
+            `;
+        }
+
+        async function testManualUrl() {
+            const testUrl = document.getElementById('testUrl').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!testUrl) {
+                resultDiv.innerHTML = '<div class="result error">❌ Please enter a URL to test</div>';
+                return;
+            }
+            
+            try {
+                // Parse the URL
+                const url = new URL(testUrl);
+                const hashParams = new URLSearchParams(url.hash.substring(1));
+                const queryParams = new URLSearchParams(url.search);
+                
+                resultDiv.innerHTML = '<div class="result info">🧪 Testing URL...</div>';
+                
+                let testResults = [];
+                
+                // Test hash-based auth (magic link)
+                if (url.hash.includes('access_token')) {
+                    testResults.push('<div class="step"><strong>🔑 Testing Magic Link Flow...</strong></div>');
+                    
+                    // Simulate what happens in EmailConfirmation component
+                    const error = hashParams.get('error');
+                    const errorDescription = hashParams.get('error_description');
+                    
+                    if (error) {
+                        testResults.push(`
+                            <div class="step">
+                                ❌ <strong>Error in URL:</strong> ${error}<br>
+                                📝 <strong>Description:</strong> ${decodeURIComponent(errorDescription || 'No description')}
+                            </div>
+                        `);
+                    } else {
+                        testResults.push(`
+                            <div class="step">
+                                ✅ <strong>No errors in URL</strong><br>
+                                🔑 Access token found: ${hashParams.get('access_token') ? 'Yes' : 'No'}<br>
+                                📅 Expires at: ${hashParams.get('expires_at') || 'Not specified'}<br>
+                                🔄 Refresh token: ${hashParams.get('refresh_token') ? 'Yes' : 'No'}
+                            </div>
+                        `);
+                    }
+                }
+                
+                // Test traditional token
+                if (queryParams.get('token')) {
+                    testResults.push(`
+                        <div class="step">
+                            <strong>🎫 Testing Traditional Token...</strong><br>
+                            Token: ${queryParams.get('token')}<br>
+                            Type: ${queryParams.get('type')}
+                        </div>
+                    `);
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="result info">
+                        <h3>🧪 Manual URL Test Results</h3>
+                        <div class="step">
+                            <strong>📍 Parsed URL:</strong><br>
+                            Origin: ${url.origin}<br>
+                            Pathname: ${url.pathname}<br>
+                            Hash: ${url.hash || '(none)'}<br>
+                            Search: ${url.search || '(none)'}
+                        </div>
+                        ${testResults.join('')}
+                        <div class="step">
+                            <strong>🔧 Recommendation:</strong><br>
+                            ${error ? '❌ Fix the error in Supabase settings' : '✅ URL format looks correct, check Supabase configuration'}
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ URL Test Failed</h3>
+                        <p>Error: ${error.message}</p>
+                        <p>Make sure the URL is complete and properly formatted.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function testRegistration() {
+            const email = document.getElementById('testEmail').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!email) {
+                resultDiv.innerHTML = '<div class="result error">❌ Please enter an email address</div>';
+                return;
+            }
+            
+            resultDiv.innerHTML = '<div class="result info">📧 Testing registration flow...</div>';
+            
+            try {
+                const timestamp = Date.now();
+                const testEmail = `${timestamp}-${email}`;
+                const password = 'testpassword123';
+                
+                // Test registration with current redirect URL
+                const { data, error } = await supabase.auth.signUp({
+                    email: testEmail,
+                    password: password,
+                    options: {
+                        emailRedirectTo: `${window.location.origin}/auth/confirm`,
+                        data: {
+                            first_name: 'Test',
+                            last_name: 'User',
+                            username: `testuser${timestamp}`,
+                            phone: '0812345678',
+                            account_type: 'personal'
+                        }
+                    }
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <h3>✅ Registration Test Successful</h3>
+                        <div class="step">
+                            <strong>📧 Email sent to:</strong> ${testEmail}<br>
+                            <strong>👤 User ID:</strong> ${data.user?.id}<br>
+                            <strong>📮 Confirmation sent:</strong> ${data.user?.confirmation_sent_at ? 'Yes' : 'No'}<br>
+                            <strong>✅ Email confirmed:</strong> ${data.user?.email_confirmed_at ? 'Yes' : 'No'}<br>
+                            <strong>🔗 Redirect URL:</strong> ${window.location.origin}/auth/confirm
+                        </div>
+                        <div class="step">
+                            <strong>📋 Next Steps:</strong><br>
+                            1. Check the email at: <code>${testEmail}</code><br>
+                            2. Click the confirmation link in the email<br>
+                            3. The link should redirect to: <code>${window.location.origin}/auth/confirm</code><br>
+                            4. Check browser console for any errors during confirmation
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Registration test failed:', error);
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Registration Test Failed</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <div class="step">
+                            <strong>🔧 Possible Issues:</strong><br>
+                            • Email service not configured properly<br>
+                            • Rate limiting (too many test emails)<br>
+                            • Invalid email format<br>
+                            • Supabase project configuration issue
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        async function checkAuthStatus() {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const { data: session, error } = await supabase.auth.getSession();
+                
+                if (error) {
+                    throw error;
+                }
+                
+                const user = session?.user;
+                
+                resultDiv.innerHTML = `
+                    <div class="result ${user ? 'success' : 'warning'}">
+                        <h3>🔐 Auth Status Check</h3>
+                        <div class="step">
+                            <strong>Session Status:</strong> ${session ? 'Active' : 'None'}<br>
+                            ${user ? `
+                                <strong>👤 User ID:</strong> ${user.id}<br>
+                                <strong>📧 Email:</strong> ${user.email}<br>
+                                <strong>✅ Email Confirmed:</strong> ${user.email_confirmed_at ? 'Yes' : 'No'}<br>
+                                <strong>📅 Created:</strong> ${new Date(user.created_at).toLocaleString()}<br>
+                                <strong>🔄 Last Sign In:</strong> ${user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : 'Never'}
+                            ` : 'No user logged in'}
+                        </div>
+                        <div class="step">
+                            <strong>🔧 Metadata:</strong><br>
+                            <pre>${JSON.stringify(user?.user_metadata || {}, null, 2)}</pre>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Auth Status Check Failed</h3>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function clearSession() {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const { error } = await supabase.auth.signOut();
+                
+                if (error) {
+                    throw error;
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <h3>✅ Session Cleared</h3>
+                        <p>User has been logged out successfully.</p>
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Clear Session Failed</h3>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-analyze on page load
+        window.addEventListener('load', () => {
+            analyzeCurrentUrl();
+        });
+    </script>
+</body>
+</html>

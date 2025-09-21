@@ -74,7 +74,7 @@ export class ConfigManager {
       
       supabase: {
         url: this.getRequiredEnv('SUPABASE_URL'),
-        anonKey: this.getRequiredEnv('SUPABASE_ANON_KEY'),
+        anonKey: this.getRequiredEnv('SUPABASE_CLIENT_API_KEY'),
         serviceKey: this.getRequiredEnv('SUPABASE_SERVICE_KEY'),
       },
       
@@ -131,7 +131,7 @@ export class ConfigManager {
   private validateRequiredEnvVars(): void {
     const required = [
       'SUPABASE_URL',
-      'SUPABASE_ANON_KEY', 
+      'SUPABASE_CLIENT_API_KEY', 
       'SUPABASE_SERVICE_KEY',
       'SMS_UP_PLUS_USERNAME',
       'SMS_UP_PLUS_PASSWORD',

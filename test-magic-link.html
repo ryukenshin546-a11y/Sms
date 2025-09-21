@@ -84,9 +84,9 @@
     <script>
         // Supabase configuration
         const SUPABASE_URL = 'https://mnhdueclyzwtfkmwttkc.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uaGR1ZWNseXp3dGZrbXd0dGtjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYzNjQzOTYsImV4cCI6MjA0MTk0MDM5Nn0.YhFKaLAqR9-KHb6I-klYhTaB8cZOTJ4C7Ot28G7dN8Y';
+        const SUPABASE_CLIENT_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1uaGR1ZWNseXp3dGZrbXd0dGtjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjYzNjQzOTYsImV4cCI6MjA0MTk0MDM5Nn0.YhFKaLAqR9-KHb6I-klYhTaB8cZOTJ4C7Ot28G7dN8Y';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_CLIENT_API_KEY);
 
         function log(message, type = 'info') {
             const timestamp = new Date().toLocaleTimeString();
@@ -240,7 +240,7 @@
         // Initialize page
         window.onload = function() {
             document.getElementById('supabaseUrl').textContent = SUPABASE_URL;
-            document.getElementById('supabaseKey').textContent = SUPABASE_ANON_KEY.substring(0, 20) + '...';
+            document.getElementById('supabaseKey').textContent = SUPABASE_CLIENT_API_KEY.substring(0, 20) + '...';
             
             analyzeCurrentUrl();
             log('🚀 Magic Link Testing Tool initialized');

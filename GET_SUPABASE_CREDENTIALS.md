@@ -14,11 +14,11 @@
 ## ขั้นตอนที่ 3: แทนที่ใน .env
 ```bash
 # เปลี่ยนจาก
-SUPABASE_CLIENT_API_KEYY=sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH
+SUPABASE_CLIENT_API_KEY=sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH
 VITE_SUPABASE_SERVICE_KEY=sb_secret_QZOyKOuNRIndQKMItJVD1Q_OSyctXNf
 
 # เป็น Keys ที่แท้จริงจาก Dashboard
-SUPABASE_CLIENT_API_KEYY=eyJ...your-real-anon-key
+SUPABASE_CLIENT_API_KEY=eyJ...your-real-anon-key
 VITE_SUPABASE_SERVICE_KEY=eyJ...your-real-service-key
 ```
 

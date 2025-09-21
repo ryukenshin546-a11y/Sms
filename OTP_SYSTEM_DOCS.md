@@ -128,7 +128,7 @@ VITE_OTP_RESEND_COOLDOWN_SECONDS=60
 
 # Supabase Configuration (existing)
 VITE_SUPABASE_URL=your_supabase_url
-SUPABASE_CLIENT_API_KEYY=your_supabase_key
+SUPABASE_CLIENT_API_KEY=your_supabase_key
 ```
 
 ## Usage Examples

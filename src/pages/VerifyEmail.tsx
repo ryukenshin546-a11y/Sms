@@ -71,7 +71,7 @@ const VerifyEmail: React.FC = () => {
             email_verified: true,
             updated_at: new Date().toISOString()
           })
-          .eq('id', data.user.id);
+          .eq('user_id', data.user.id);
 
         if (updateError) {
           console.error('⚠️ Warning: Failed to update profiles table:', updateError);
@@ -138,7 +138,7 @@ const VerifyEmail: React.FC = () => {
                 email_verified: true,
                 updated_at: new Date().toISOString()
               })
-              .eq('id', data.user.id);
+              .eq('user_id', data.user.id);
 
             if (updateError) {
               console.error('⚠️ Warning: Failed to update profiles table:', updateError);
@@ -202,7 +202,7 @@ const VerifyEmail: React.FC = () => {
               email_verified: true,
               updated_at: new Date().toISOString()
             })
-            .eq('id', data.user.id);
+            .eq('user_id', data.user.id);
 
           if (updateError) {
             console.error('⚠️ Warning: Failed to update profiles table:', updateError);

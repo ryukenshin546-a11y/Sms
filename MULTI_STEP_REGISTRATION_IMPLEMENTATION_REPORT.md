@@ -262,7 +262,7 @@ npm run deploy
 ```
 # Ensure these are set in your environment:
 VITE_SUPABASE_URL=your_supabase_url
-SUPABASE_CLIENT_API_KEYY=your_supabase_key
+SUPABASE_CLIENT_API_KEY=your_supabase_key
 
 # Email verification redirect
 # Update in Supabase Auth settings:

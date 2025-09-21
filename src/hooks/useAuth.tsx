@@ -26,8 +26,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Get initial session
     const getInitialSession = async () => {
       const { data: { session: initialSession } } = await supabase.auth.getSession();
+      const initialUser = initialSession?.user ?? null;
+      
       setSession(initialSession);
-      setUser(initialSession?.user ?? null);
+      setUser(initialUser);
       setLoading(false);
     };
 
@@ -36,8 +38,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
+        const newUser = session?.user ?? null;
+        
+        // Only update user if it actually changed (compare user IDs)
+        setUser(prevUser => {
+          if (prevUser?.id === newUser?.id) {
+            return prevUser; // Keep same user object reference
+          }
+          return newUser;
+        });
+        
         setSession(session);
-        setUser(session?.user ?? null);
         setLoading(false);
       }
     );

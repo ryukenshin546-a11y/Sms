@@ -3,7 +3,7 @@
 
 // Set environment variables for testing
 process.env.VITE_SUPABASE_URL = 'https://mnhdueclyzwtfkmwttkc.supabase.co';
-process.env.SUPABASE_CLIENT_API_KEYY = 'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH';
+process.env.SUPABASE_CLIENT_API_KEY = 'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH';
 
 // Create supabase client directly for testing
 import { createClient } from '@supabase/supabase-js';
@@ -11,7 +11,7 @@ import type { Database } from './src/types/database.types';
 
 const supabase = createClient<Database>(
   process.env.VITE_SUPABASE_URL!,
-  process.env.SUPABASE_CLIENT_API_KEYY!
+  process.env.SUPABASE_CLIENT_API_KEY!
 );
 
 // Import ProfileService and create instance with our client

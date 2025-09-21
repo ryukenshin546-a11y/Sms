@@ -12,7 +12,7 @@ class RealDatabasePerformanceTester {
     console.log('🔍 Loading Environment Variables...');
     
     this.supabaseUrl = process.env.VITE_SUPABASE_URL;
-    this.supabaseAnonKey = process.env.SUPABASE_CLIENT_API_KEYY;
+    this.supabaseAnonKey = process.env.SUPABASE_CLIENT_API_KEY;
     this.supabaseServiceKey = process.env.VITE_SUPABASE_SERVICE_KEY;
     
     console.log(`📡 Supabase URL: ${this.supabaseUrl}`);

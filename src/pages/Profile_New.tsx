@@ -10,8 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Loader2, User, Mail, Phone, Building, Eye, EyeOff, Copy, ExternalLink, Settings, Activity, AlertCircle } from 'lucide-react';
-import { generateSMSAccount } from '@/services/smsBotService';
-import type { UserGenerationData } from '@/services/smsBotService';
+import { generateSMSAccount } from '@/services/smsAccountApiService';
+import type { UserGenerationData } from '@/services/smsAccountApiService';
 
 const Profile = () => {
   // Mock user data - ในโปรดักชั่นจะดึงจาก API หรือ context
@@ -37,7 +37,7 @@ const Profile = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  // Real Auto-Bot Process สำหรับ generate SMS account
+  // SMS Account generation with new API service
   const generateSMSAccountReal = async () => {
     setSmsAccount({ 
       status: 'generating', 
@@ -47,20 +47,35 @@ const Profile = () => {
 
     try {
       const credentials = await generateSMSAccount(
-        'user123', // userId
-        userData, // userInfo
         (step: string, progress: number) => {
           setSmsAccount(prev => ({
             ...prev,
             progress,
             currentStep: step
           }));
+        },
+        { 
+          username: `${userData.firstName}_${userData.lastName}`.toLowerCase().replace(/\s+/g, '_'),
+          email: userData.email,
+          creditAmount: 100 // Default credit amount
         }
       );
 
+      // Convert GeneratedAccount to UserGenerationData format
+      const userGenerationData: UserGenerationData = {
+        username: credentials.username,
+        email: credentials.email,
+        password: credentials.password,
+        originalEmail: userData.email,
+        sender: credentials.sender || 'Unknown',
+        accountId: credentials.accountId || '',
+        status: credentials.status || 'active',
+        createdAt: credentials.createdAt || new Date().toISOString()
+      };
+
       setSmsAccount({
         status: 'generated',
-        credentials,
+        credentials: userGenerationData,
         progress: 100,
         currentStep: 'สำเร็จ!'
       });
@@ -317,6 +332,50 @@ const Profile = () => {
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 bg-green-50 rounded">
+                      <div>
+                        <Label className="text-sm font-medium">SMS Sender</Label>
+                        <p className="text-sm text-muted-foreground font-mono">{smsAccount.credentials.sender}</p>
+                        <p className="text-xs text-gray-500 mt-1">ชื่อผู้ส่งที่ได้รับมอบหมาย (สุ่มจาก 3 ตัวเลือก)</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(smsAccount.credentials!.sender)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded">
+                      <div>
+                        <Label className="text-sm font-medium">Account ID</Label>
+                        <p className="text-sm text-muted-foreground font-mono">{smsAccount.credentials.accountId}</p>
+                        <p className="text-xs text-gray-500 mt-1">รหัสบัญชี SMS-UP</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => copyToClipboard(smsAccount.credentials!.accountId)}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <div className="flex items-center justify-between p-3 bg-purple-50 rounded">
+                      <div>
+                        <Label className="text-sm font-medium">Status</Label>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <Badge variant={smsAccount.credentials.status === 'active' ? 'default' : 'secondary'}>
+                            {smsAccount.credentials.status}
+                          </Badge>
+                          <span className="text-xs text-gray-500">
+                            สร้างเมื่อ {new Date(smsAccount.credentials.createdAt).toLocaleDateString('th-TH')}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
