@@ -25,14 +25,14 @@ COPY components.json ./
 # Accept build arguments for environment variables
 ARG VITE_SUPABASE_URL
 ARG VITE_SUPABASE_ANON_KEY
+ARG SUPABASE_CLIENT_API_KEY
 
-# Set environment variables for Vite build
+# Set environment variables for Vite build (non-sensitive only)
 ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
-ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
 ENV NODE_ENV=production
 
-# Build the application
-RUN npm run build
+# Build the application with environment variables inline
+RUN VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY:-$SUPABASE_CLIENT_API_KEY} npm run build
 
 # Verify build output exists
 RUN ls -la /app/dist && test -f /app/dist/index.html
@@ -52,9 +52,9 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Remove default nginx config
 RUN rm /etc/nginx/conf.d/default.conf
 
-# Create non-root user for security
-RUN addgroup -g 1001 -S nginx && \
-    adduser -S nginx -u 1001
+# Create non-root user for security (check if exists first)
+RUN getent group nginx || addgroup -g 1001 -S nginx
+RUN getent passwd nginx || adduser -S nginx -u 1001 -G nginx
 
 # Set proper permissions
 RUN chown -R nginx:nginx /usr/share/nginx/html && \
