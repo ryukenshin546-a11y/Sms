@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: sms-system
     ports:
-      - "3000:3000"  # Vite preview server
+      - "80:80"  # NGINX serving static files
     environment:
       - NODE_ENV=production
       # These will be passed to the frontend build
