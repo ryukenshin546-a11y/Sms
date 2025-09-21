@@ -1,6 +1,6 @@
-# Single-stage build for SMS System (Frontend Only)
-# Updated: 2025-09-21 - Fixed nginx static serving
-FROM node:20-alpine as build
+# Simple Node.js build for Easypanel
+# Updated: 2025-09-21 - Use vite preview for production
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
@@ -12,7 +12,7 @@ COPY bun.lockb ./
 # Install dependencies
 RUN npm install
 
-# Copy source code (exclude server folder)
+# Copy source code
 COPY src/ ./src/
 COPY public/ ./public/
 COPY index.html ./
@@ -25,24 +25,12 @@ COPY components.json ./
 # Build the application
 RUN npm run build
 
-# Production stage with Nginx
-FROM nginx:alpine as production
-
-# Copy built assets from build stage
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Create logs directory
-RUN mkdir -p /var/log/nginx
-
 # Expose port
-EXPOSE 80
+EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Start application
+CMD ["npm", "start"]
