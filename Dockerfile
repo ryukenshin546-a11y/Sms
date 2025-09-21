@@ -1,23 +1,42 @@
 # SMS Auto-Bot System - Dockerfile for Easypanel
-# Simplified single-stage build without Nginx
+# Multi-stage build for optimized production image
 
-FROM node:18-alpine
+# Stage 1: Build stage
+FROM node:18-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
 # Copy package files first for better caching
 COPY package*.json ./
 COPY bun.lockb ./
 
-# Install dependencies
-RUN npm ci --production
+# Install ALL dependencies (including devDependencies) for building
+RUN npm ci
 
 # Copy source files
 COPY . .
 
 # Build the React application
 RUN npm run build
+
+# Stage 2: Production stage
+FROM node:18-alpine AS production
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+COPY bun.lockb ./
+
+# Install only production dependencies
+RUN npm ci --production
+
+# Copy built application from builder stage
+COPY --from=builder /app/dist ./dist
+
+# Copy server files
+COPY server ./server
+COPY scripts ./scripts
 
 # Install serve to host static files
 RUN npm install -g serve
