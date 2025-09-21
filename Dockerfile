@@ -9,8 +9,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY bun.lockb ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install dependencies (including devDependencies for build)
+RUN npm ci && npm cache clean --force
 
 # Copy source code
 COPY src/ ./src/
@@ -23,13 +23,20 @@ COPY postcss.config.js ./
 COPY components.json ./
 
 # Build the application
+ENV NODE_ENV=production
 RUN npm run build
+
+# Verify build output exists
+RUN ls -la /app/dist && test -f /app/dist/index.html
 
 # Production stage with NGINX
 FROM nginx:alpine AS production
 
 # Copy built assets from build stage
 COPY --from=build /app/dist /usr/share/nginx/html
+
+# Verify files were copied
+RUN ls -la /usr/share/nginx/html && test -f /usr/share/nginx/html/index.html
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
