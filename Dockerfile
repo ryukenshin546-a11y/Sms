@@ -1,4 +1,5 @@
 # Single-stage build for SMS System (Frontend Only)
+# Updated: 2025-09-21 - Fixed nginx static serving
 FROM node:20-alpine as build
 
 # Set working directory
