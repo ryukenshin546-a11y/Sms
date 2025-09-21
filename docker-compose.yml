@@ -7,53 +7,33 @@ services:
       dockerfile: Dockerfile
     container_name: sms-system
     ports:
-      - "3000:3000"  # Frontend
-      - "5000:5000"  # Backend API
+      - "80:80"  # Nginx serving the frontend
     environment:
       - NODE_ENV=production
-      - SUPABASE_URL=${SUPABASE_URL}
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
-      - SMS_UP_PLUS_USERNAME=${SMS_UP_PLUS_USERNAME}
-      - SMS_UP_PLUS_PASSWORD=${SMS_UP_PLUS_PASSWORD}
-      - ENCRYPTION_MASTER_KEY=${ENCRYPTION_MASTER_KEY}
-      - JWT_SECRET=${JWT_SECRET}
-      - ENCRYPTION_ENABLED=${ENCRYPTION_ENABLED}
-      - RATE_LIMIT_ENABLED=${RATE_LIMIT_ENABLED}
-      - ENABLE_SECURITY_MONITORING=${ENABLE_SECURITY_MONITORING}
+      # These will be passed to the frontend build
+      - VITE_SUPABASE_URL=${SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/var/log/nginx
     restart: unless-stopped
-    depends_on:
-      - redis
     networks:
       - sms-network
 
-  redis:
-    image: redis:7-alpine
-    container_name: sms-redis
-    restart: unless-stopped
-    volumes:
-      - redis_data:/data
-    networks:
-      - sms-network
-
-  nginx:
-    image: nginx:alpine
-    container_name: sms-nginx
+  # Optional: If you want to add monitoring
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: sms-portainer
     ports:
-      - "80:80"
-      - "443:443"
+      - "9000:9000"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro
-    depends_on:
-      - sms-app
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
     restart: unless-stopped
     networks:
       - sms-network
 
 volumes:
-  redis_data:
+  portainer_data:
 
 networks:
   sms-network:

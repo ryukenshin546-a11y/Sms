@@ -24,41 +24,35 @@
 Create these environment variables in Easypanel:
 
 ```bash
-# Supabase Configuration
+# Supabase Configuration (Frontend)
+VITE_SUPABASE_URL=https://mnhdueclyzwtfkmwttkc.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key_here
+
+# Optional: For build-time Supabase configurations
 SUPABASE_URL=https://mnhdueclyzwtfkmwttkc.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=sb_secret_QZOyKOuNRIndQKMItJVD1Q_OSyctXNf
-
-# SMS Service
-SMS_UP_PLUS_USERNAME=Landingpage
-SMS_UP_PLUS_PASSWORD=@Atoz123
-
-# Security Keys
-ENCRYPTION_MASTER_KEY=IKtzGD4UZuGUNt2DWRcFdAGGtB3PdRMmKUS510SthQw=
-JWT_SECRET=Ls9uLzXynj+96dHmplKtubzCeD6vjA8OuxJ4nrY0K/O1gCsBlc+BKUj2RTvmZcFy42MF9VuPnxhUQWHAwm/isA==
+SUPABASE_ANON_KEY=your_anon_key_here
 
 # Production Settings
 NODE_ENV=production
-ENCRYPTION_ENABLED=true
-RATE_LIMIT_ENABLED=true
-ENABLE_SECURITY_MONITORING=true
 ```
 
 ### 2. **Docker Configuration**
-- ✅ Dockerfile created (multi-stage build)
-- ✅ docker-compose.yml ready
-- ✅ nginx.conf for reverse proxy
+- ✅ Dockerfile updated (Frontend + Nginx only)
+- ✅ docker-compose.yml simplified
+- ✅ nginx.conf optimized for SPA
 - ✅ Health checks implemented
+- ❌ Server backend removed (using Supabase Edge Functions)
 
 ### 3. **Port Configuration**
-- **Frontend**: Port 3000
-- **Backend API**: Port 5000  
-- **Nginx Proxy**: Port 80/443
-- **Redis Cache**: Port 6379 (internal)
+- **Frontend**: Port 80 (Nginx serving static files)
+- **Health Check**: /health endpoint
+- **No backend server** (All API calls go to Supabase Edge Functions)
 
-### 4. **Required Services**
-- **Main App**: SMS System container
-- **Redis**: For caching and rate limiting
-- **Nginx**: Reverse proxy and load balancing
+### 4. **Architecture**
+- **Frontend**: React SPA served by Nginx
+- **Backend**: Supabase Edge Functions (already deployed)
+- **Database**: Supabase (cloud hosted)
+- **Authentication**: Supabase Auth
 
 ---
 
