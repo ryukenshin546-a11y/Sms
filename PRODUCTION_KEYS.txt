@@ -1,0 +1,37 @@
+# 🔑 Generated Security Keys for Production
+# สร้างเมื่อ: 22 September 2025
+# สำหรับใช้ใน Production Environment Variables
+
+# ===========================================
+# SECURITY KEYS (ใช้ในการเข้ารหัส)
+# ===========================================
+ENCRYPTION_KEY=90617EABFCD0765E76957275637DEE4764EB32FD94505607EDE00A0B24783226
+JWT_SECRET=r#Fe@89vWl9*wVunAqK0tRwBEoZBrMBQMOFuAg66DomWpTm8f1T2rNU4kLw$IJOk
+ENCRYPTION_MASTER_KEY=R/igsrgln5nymo0tp49z+NLl558Lp48WcBFUdIsQa9A=
+
+# ===========================================
+# SUPABASE KEYS (จากไฟล์ .env ที่มีอยู่)
+# ===========================================
+VITE_SUPABASE_URL=https://mnhdueclyzwtfkmwttkc.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH
+SUPABASE_CLIENT_API_KEY=sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH
+VITE_SUPABASE_SERVICE_KEY=sb_secret_QZOyKOuNRIndQKMItJVD1Q_OSyctXNf
+
+# ===========================================
+# SMS SERVICE KEYS (จากไฟล์ .env ที่มีอยู่)
+# ===========================================
+VITE_SMS_ADMIN_USERNAME=Landingpage
+VITE_SMS_ADMIN_PASSWORD=@Atoz123
+VITE_ANTS_OTP_BASE_URL=https://web.smsup-plus.com
+VITE_ANTS_OTP_LOGIN_USERNAME=Landingpage
+VITE_ANTS_OTP_LOGIN_PASSWORD=@Atoz123
+
+# ===========================================
+# คำแนะนำการใช้งาน:
+# ===========================================
+# 1. คัดลอกค่าเหล่านี้ไปใส่ใน Easypanel Environment Variables
+# 2. ไม่ต้อง commit ไฟล์นี้ไปใน Git (เก็บไว้เฉพาะเครื่องของคุณ)
+# 3. สำรองไฟล์นี้ไว้ในที่ปลอดภัย
+# 4. หากมีการรั่วไหล ให้สร้าง keys ใหม่ทันที
+
+# สำคัญ: ไฟล์นี้มีความลับสูงสุด ห้าม share หรือ upload ไปที่ใด!
