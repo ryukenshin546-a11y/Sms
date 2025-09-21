@@ -1,9 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '../types/supabase';
 
-// Supabase project configuration
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://mnhdueclyzwtfkmwttkc.supabase.co';
-const supabaseAnonKey = import.meta.env.SUPABASE_CLIENT_API_KEY || 'sb_publishable_yu9gJ7X8C7CjbpqVsvNgGg_LOLkI7mH';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error("Supabase URL and Anon Key must be provided in environment variables.");
+}
 
 // Standard client for auth and database operations (SAFE FOR BROWSER)
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
